@@ -1,6 +1,6 @@
 exports.up = function(knex) {
   console.log("creating topics table...");
-  return knex.schema.creatTable("topics", topicsTable => {
+  return knex.schema.createTable("topics", topicsTable => {
     topicsTable
       .string("topic_slug")
       .unique()
