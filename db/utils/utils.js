@@ -22,6 +22,24 @@ exports.formatDates = list => {
   }
 };
 
-exports.makeRefObj = list => {};
+exports.makeRefObj = list => {
+  const referenceObj = {};
+  list.forEach(obj => {
+    referenceObj[obj.title] = obj.title_id;
+  });
 
-exports.formatComments = (comments, articleRef) => {};
+  return referenceObj;
+};
+
+exports.formatComments = (comments, articleRef) => {
+  return comments.map(comment => {
+    const formatted = {
+      body: comment.body,
+      article_id: articleRef[comment.belongs_to],
+      author: comment.created_by,
+      votes: comment.votes,
+      created_at: new Date(comment.created_at)
+    };
+    return formatted;
+  });
+};
