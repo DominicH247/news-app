@@ -117,7 +117,7 @@ Utilising your data manipulation skills, you will also need to complete the util
 
 ---
 
-### Vital Routes
+### Vital Routes \*\*\*
 
 Your server _must_ have the following endpoints:
 
