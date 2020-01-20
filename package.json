@@ -11,7 +11,8 @@
     "seed": "knex seed:run",
     "seed-test": "npm run setup-dbs&&NODE_ENV=test knex seed:run",
     "test-utils": "mocha spec/utils.spec.js",
-    "test": "mocha spec/app.spec.js"
+    "test": "mocha spec/app.spec.js",
+    "dev": "nodemon listen.js"
   },
   "repository": {
     "type": "git",
@@ -25,11 +26,13 @@
   },
   "homepage": "https://github.com/northcoders/be-nc-news#readme",
   "dependencies": {
+    "express": "^4.17.1",
     "knex": "^0.20.8",
     "pg": "^7.17.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "mocha": "^7.0.0"
+    "mocha": "^7.0.0",
+    "nodemon": "^2.0.2"
   }
 }
