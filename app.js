@@ -5,7 +5,10 @@ const app = express();
 const apiRouter = require("./routes/apiRouter.js");
 
 // error handlers
-const { handleInvalidPath404 } = require("./errors/index.js");
+const {
+  handleInvalidPath404,
+  handleServerError500
+} = require("./errors/index.js");
 
 //parse request body
 app.use(express.json());
@@ -15,5 +18,5 @@ app.use("/api", apiRouter);
 
 // controller error handlers
 app.all("/*", handleInvalidPath404);
-
+app.use(handleServerError500);
 module.exports = app;
