@@ -21,8 +21,19 @@ exports.seed = function(knex) {
 
       Your comment insertions will depend on information from the seeded articles, so make sure to return the data after it's been seeded.
       */
+
+      //format article date to JS date object
+      const formattedArticles = formatDates(articleData);
+
+      // seed formatted article data into database
+      return knex
+        .insert(formattedArticles)
+        .into(articles)
+        .returning("*");
     })
     .then(articleRows => {
+      console.log(articleRows);
+
       /* 
 
       Your comment data is currently in the incorrect format and will violate your SQL schema. 
