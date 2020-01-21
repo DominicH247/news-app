@@ -43,7 +43,7 @@ exports.seed = function(knex) {
         .returning("*");
     })
     .then(articleRows => {
-      console.log(`Inserted articles ${articleRows.length}`);
+      // console.log(`Inserted articles ${articleRows.length}`);
 
       //format comments - exchange "blongs_to" to "article_id"
 
@@ -73,6 +73,6 @@ exports.seed = function(knex) {
         .returning("*");
     })
     .then(insertedComments => {
-      console.log(`Inserted comments: ${insertedComments.length}`);
+      // console.log(`Inserted comments: ${insertedComments.length}`);
     });
 };

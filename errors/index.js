@@ -6,6 +6,10 @@ exports.handleCustom = (err, req, res, next) => {
   }
 };
 
+exports.handleBadRequest400 = (err, req, res, next) => {
+  res.status(400).send({ msg: "400 Bad Request - Invalid data-type" });
+};
+
 exports.handleServerError500 = (err, req, res, next) => {
   console.log(err);
   res.status(500).send({ msg: "Internal Server Error" });

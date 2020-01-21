@@ -7,6 +7,7 @@ const apiRouter = require("./routes/apiRouter.js");
 // error handlers
 const {
   handleCustom,
+  handleBadRequest400,
   handleInvalidPath404,
   handleServerError500
 } = require("./errors/index.js");
@@ -19,6 +20,7 @@ app.use("/api", apiRouter);
 
 // error handlers
 app.use(handleCustom);
+app.use(handleBadRequest400);
 
 // controller error handlers
 app.all("/*", handleInvalidPath404);
