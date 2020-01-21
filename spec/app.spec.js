@@ -15,6 +15,7 @@ after(() => {
 });
 
 describe("/api", () => {
+  /* APPLICATION ROUTE */
   describe("GET", () => {
     // precautionary
     describe("ERROR - INVALID APPLICATION PATH", () => {
@@ -28,6 +29,7 @@ describe("/api", () => {
       });
     });
   });
+  /* TOPICS END POINT */
   describe("/topics", () => {
     describe("GET", () => {
       it("STATUS: 200, responds with an object with an array of objects, nesteted within, on the key of topics", () => {
@@ -44,6 +46,7 @@ describe("/api", () => {
             expect(topics[0]).to.have.all.keys(["description", "slug"]);
           });
       });
+      /* TOPICS ENDPOINT ERRORS */
       describe("ERROR - GET", () => {
         describe("INVALID PATH", () => {
           it("STATUS:404 - responds with error message", () => {
@@ -74,13 +77,55 @@ describe("/api", () => {
         });
       });
 
-      //TODO
-      // describe("/PATH/BY_ID", () => {
-      //   it("TEST", () => {});
-      // });
-      // describe("/PATH/QUERY", () => {
-      //   it("TEST", () => {});
-      // });
+      /* USERS END POINT */
+      describe("/users", () => {
+        describe("/users/:username", () => {
+          describe("GET", () => {
+            it("STATUS: 200, responds with a user object for the given username", () => {
+              return request(app)
+                .get("/api/users/butter_bridge")
+                .expect(200)
+                .then(({ body }) => {
+                  const testOutput = {
+                    user: [
+                      {
+                        username: "butter_bridge",
+                        name: "jonny",
+                        avatar_url:
+                          "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+                      }
+                    ]
+                  };
+                  expect(body).to.eql(testOutput);
+                });
+            });
+            /* USERS ENDPOINT ERRORS */
+            describe("ERROR - GET", () => {
+              describe("NOT FOUND", () => {
+                it("STATUS: 404 - responds with error message", () => {
+                  return request(app)
+                    .get("/api/users/not-a-username")
+                    .expect(404)
+                    .then(({ body: { msg } }) => {
+                      expect(msg).to.equal(
+                        "404 Not Found - Item does not exist"
+                      );
+                    });
+                });
+              });
+            });
+            /* Invalid Methods on users endpoint already covered via 
+            testing in the topics end point */
+          });
+        });
+      });
+
+      /* ARTICLES ENDPOINT */
+      describe("/articles", () => {
+        describe("GET", () => {
+          it("status: 200, responds with array of article objects", () => {});
+        });
+      });
       // describe("TYPE OF ERROR - GET", () => {
       //   describe("ERROR CODE: 4XX", () => {
       //     it("Responds with error message", () => {});
