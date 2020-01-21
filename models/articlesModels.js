@@ -54,3 +54,41 @@ exports.updateArticleById = (article_id, inc_votes) => {
       return article;
     });
 };
+
+exports.insertCommentByArticleId = (article_id, comment) => {
+  /* Check user and article exists will */
+  const checkUserPromise = connection
+    .from("users")
+    .where({ username: comment.username })
+    .then(user => {
+      return user;
+    });
+
+  const checkArticlePromise = connection
+    .from("articles")
+    .where({ article_id })
+    .then(article => {
+      return article;
+    });
+
+  return Promise.all([checkUserPromise, checkArticlePromise]).then(
+    ([checkedUser, checkArticle]) => {
+      // format comment for db insertion
+      const formattedComment = {
+        author: checkedUser[0].username,
+        article_id: Number(article_id),
+        votes: 0,
+        body: comment.body
+      };
+
+      // insert formatted comment into comments table
+      return connection
+        .from("comments")
+        .insert(formattedComment)
+        .returning("*")
+        .then(insertedComment => {
+          return insertedComment[0];
+        });
+    }
+  );
+};

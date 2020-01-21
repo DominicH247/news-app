@@ -1,7 +1,8 @@
 // articles model
 const {
   fetchArticleById,
-  updateArticleById
+  updateArticleById,
+  insertCommentByArticleId
 } = require("../models/articlesModels.js");
 
 exports.getArticleById = (req, res, next) => {
@@ -23,4 +24,13 @@ exports.patchArticleById = (req, res, next) => {
       res.status(200).send({ article });
     })
     .catch(next);
+};
+
+exports.postCommentByArticleId = (req, res, next) => {
+  const { article_id } = req.params;
+  const comment = req.body;
+
+  insertCommentByArticleId(article_id, comment).then(comment => {
+    res.status(201).send({ comment });
+  });
 };

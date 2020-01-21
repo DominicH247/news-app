@@ -48,7 +48,7 @@ describe("/api", () => {
             expect(topics[0]).to.have.all.keys(["description", "slug"]);
           });
       });
-      /* TOPICS ENDPOINT ERRORS */
+      /* TOPICS /tpoics ENDPOINT ERRORS */
       describe("ERROR - GET", () => {
         describe("INVALID PATH", () => {
           it("STATUS:404 - responds with error message", () => {
@@ -153,7 +153,7 @@ describe("/api", () => {
               });
           });
         });
-        /* ARTICLES END POINT ERROR */
+        /* ARTICLES /:article_id END POINT ERRORS */
         describe("ERROR - GET", () => {
           describe("NOT FOUND", () => {
             it("STATUS: 404, responds with error message", () => {
@@ -191,6 +191,28 @@ describe("/api", () => {
             });
           });
         });
+        /* Invalid methods already covered */
+      });
+      describe("/comments", () => {
+        describe("POST", () => {
+          it("Status: 201, responds with newly posted comment", () => {
+            return request(app)
+              .post("/api/articles/1/comments")
+              .send({ username: "icellusedkars", body: "Test message" })
+              .expect(201)
+              .then(({ body }) => {
+                expect(body.comment).to.have.all.keys([
+                  "article_id",
+                  "author",
+                  "body",
+                  "comment_id",
+                  "created_at",
+                  "votes"
+                ]);
+              });
+          });
+        });
+        //TODO GET comments by article id and error handlers
       });
     });
   });
