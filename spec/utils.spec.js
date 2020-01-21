@@ -19,7 +19,6 @@ describe("formatDates take an array (list) of objects and return a new array. Ea
     ];
 
     const testOutput = formatDates(testData);
-    console.log(testOutput, " test");
 
     expect(testOutput[0].created_at).to.be.a("date");
   });
@@ -78,7 +77,7 @@ describe("makeRefObj should be able to take an array (list) of objects and retur
   it("single item in the array", () => {
     const testData = [
       {
-        title_id: 1,
+        article_id: 1,
         title: "Living in the shadow of a great man",
         topic: "mitch",
         author: "butter_bridge",
@@ -97,7 +96,7 @@ describe("makeRefObj should be able to take an array (list) of objects and retur
   it("More than one item in the array", () => {
     const testData = [
       {
-        title_id: 1,
+        article_id: 1,
         title: "Living in the shadow of a great man",
         topic: "mitch",
         author: "butter_bridge",
@@ -106,7 +105,7 @@ describe("makeRefObj should be able to take an array (list) of objects and retur
         votes: 100
       },
       {
-        title_id: 3,
+        article_id: 3,
         title: "Eight pug gifs that remind me of mitch",
         topic: "mitch",
         author: "icellusedkars",
@@ -125,7 +124,7 @@ describe("makeRefObj should be able to take an array (list) of objects and retur
   it("original input is not mutated", () => {
     const testData = [
       {
-        title_id: 1,
+        article_id: 1,
         title: "Living in the shadow of a great man",
         topic: "mitch",
         author: "butter_bridge",
@@ -138,7 +137,7 @@ describe("makeRefObj should be able to take an array (list) of objects and retur
     makeRefObj(testData);
     expect(testData).to.eql([
       {
-        title_id: 1,
+        article_id: 1,
         title: "Living in the shadow of a great man",
         topic: "mitch",
         author: "butter_bridge",
@@ -179,6 +178,8 @@ describe("formatComments utility function should be able to take an array of com
         created_at: formattedDate
       }
     ];
+
+    const test = formatComments(testData, testRefObj);
 
     expect(formatComments(testData, testRefObj)).to.eql(testOutput);
   });

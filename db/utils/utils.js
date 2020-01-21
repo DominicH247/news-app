@@ -25,7 +25,7 @@ exports.formatDates = list => {
 exports.makeRefObj = list => {
   const referenceObj = {};
   list.forEach(obj => {
-    referenceObj[obj.title] = obj.title_id;
+    referenceObj[obj.title] = obj.article_id;
   });
 
   return referenceObj;

@@ -123,7 +123,35 @@ describe("/api", () => {
       /* ARTICLES ENDPOINT */
       describe("/articles", () => {
         describe("GET", () => {
-          it("status: 200, responds with array of article objects", () => {});
+          it("status: 200, responds with array of article objects", () => {
+            return request(app)
+              .get("/api/articles/1")
+              .expect(200)
+              .then(({ body: { article } }) => {
+                expect(article).to.have.all.keys([
+                  "author",
+                  "title",
+                  "article_id",
+                  "topic",
+                  "created_at",
+                  "votes",
+                  "comment_count"
+                ]);
+              });
+          });
+          /* ARTICLES END POINT ERROR */
+          describe.only("ERROR - GET", () => {
+            describe("NOT FOUND", () => {
+              it("STATUS: 404, responds with error message", () => {
+                return request(app)
+                  .get("/api/users/1")
+                  .expect(404)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal("404 Not Found - Item does not exist");
+                  });
+              });
+            });
+          });
         });
       });
       // describe("TYPE OF ERROR - GET", () => {
