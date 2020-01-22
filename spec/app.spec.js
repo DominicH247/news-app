@@ -554,7 +554,7 @@ describe("/api", () => {
               expect(comment.comment_id).to.equal(1);
             });
         });
-        it.only("Status:200 decrease comment_id votes", () => {
+        it("Status:200 decrease comment_id votes", () => {
           return request(app)
             .patch("/api/comments/1")
             .send({ inc_votes: -10 })
@@ -567,7 +567,7 @@ describe("/api", () => {
       });
     });
     describe("DELTE", () => {
-      it.only("Status 204", () => {
+      it("Status 204", () => {
         return request(app)
           .delete("/api/comments/1")
           .expect(204);

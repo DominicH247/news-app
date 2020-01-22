@@ -19,3 +19,10 @@ exports.updateCommentById = (comment_id, inc_votes) => {
       return comment[0];
     });
 };
+
+exports.removeCommentById = comment_id => {
+  return connection
+    .from("comments")
+    .where({ comment_id })
+    .del();
+};
