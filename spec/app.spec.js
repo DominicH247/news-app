@@ -539,4 +539,21 @@ describe("/api", () => {
       });
     });
   });
+
+  /* COMMENTS ENDPOINT */
+  describe("/comments", () => {
+    describe("/:comment_id", () => {
+      describe("PATCH", () => {
+        it.only("Status:200 increase comment_id votes", () => {
+          return request(app)
+            .patch("/api/comments/1")
+            .send({ inc_votes: 50 })
+            .expect(200)
+            .then(({ body: { comment } }) => {
+              expect(comment.votes).to.equal("");
+            });
+        });
+      });
+    });
+  });
 });
