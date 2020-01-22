@@ -544,14 +544,53 @@ describe("/api", () => {
   describe("/comments", () => {
     describe("/:comment_id", () => {
       describe("PATCH", () => {
-        it.only("Status:200 increase comment_id votes", () => {
+        it("Status:200 increase comment_id votes", () => {
           return request(app)
             .patch("/api/comments/1")
             .send({ inc_votes: 50 })
             .expect(200)
             .then(({ body: { comment } }) => {
-              expect(comment.votes).to.equal("");
+              expect(comment.votes).to.equal(66);
+              expect(comment.comment_id).to.equal(1);
             });
+        });
+        it("Status:200 return original comment unaffected if no inc_votes passed", () => {
+          return request(app)
+            .patch("/api/comments/1")
+            .send({})
+            .expect(200)
+            .then(({ body: { comment } }) => {
+              expect(comment.votes).to.equal(16);
+              expect(comment.comment_id).to.equal(1);
+            });
+        });
+      });
+    });
+    describe("DELTE", () => {
+      describe("Status 204", () => {});
+    });
+    /* ERRORS /api/comments/:comment_id */
+    describe("ERRORS", () => {
+      describe("PATCH", () => {
+        describe("BAD REQUEST", () => {
+          it("STATUS 400, posting to non-existant comment_id", () => {
+            return request(app)
+              .patch("/api/comments/-1")
+              .send({ inc_votes: 10 })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("400 Bad Request");
+              });
+          });
+          it("STATUS: 400, posting incorrect data type", () => {
+            return request(app)
+              .patch("/api/comments/1")
+              .send({ inc_votes: "invalid-votes" })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("400 Bad Request");
+              });
+          });
         });
       });
     });

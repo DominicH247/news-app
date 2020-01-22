@@ -1,4 +1,5 @@
 const connection = require("../db/connection.js");
+
 const { custom404, custom400 } = require("../errors/customErrors.js");
 
 exports.fetchArticleById = article_id => {

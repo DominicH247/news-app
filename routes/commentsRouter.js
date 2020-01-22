@@ -5,6 +5,6 @@ const commentsRouter = express.Router();
 const { patchCommentById } = require("../controllers/commentsController.js");
 
 // routes
-commentsRouter.route("/:comments_id").patch(patchCommentById);
+commentsRouter.route("/:comment_id").patch(patchCommentById);
 
 module.exports = commentsRouter;
