@@ -298,6 +298,7 @@ describe("/api", () => {
                 "votes",
                 "comment_count"
               ]);
+              expect(article.article_id).to.equal(1);
             });
         });
         describe("PATCH", () => {
@@ -359,8 +360,8 @@ describe("/api", () => {
               .post("/api/articles/1/comments")
               .send({ username: "icellusedkars", body: "Test message" })
               .expect(201)
-              .then(({ body }) => {
-                expect(body.comment).to.have.all.keys([
+              .then(({ body: { comment } }) => {
+                expect(comment).to.have.all.keys([
                   "article_id",
                   "author",
                   "body",
@@ -368,6 +369,7 @@ describe("/api", () => {
                   "created_at",
                   "votes"
                 ]);
+                expect(comment.article_id).to.equal(1);
               });
           });
         });
@@ -377,15 +379,18 @@ describe("/api", () => {
               .get("/api/articles/1/comments")
               .expect(200)
               .then(({ body: { comments } }) => {
-                expect(comments[0]).to.have.all.keys([
-                  "comment_id",
-                  "author",
-                  "votes",
-                  "created_at",
-                  "body"
-                ]);
+                if (comments.length !== 0) {
+                  expect(comments[1]).to.have.all.keys([
+                    "comment_id",
+                    "author",
+                    "votes",
+                    "created_at",
+                    "body"
+                  ]);
+                } else {
+                  expect(comments.length).to.equal(0);
+                }
               });
-            // if ARTICLE HAS NO COMMENTS - TO HANDLE ERROR
           });
           it("accepts query sort_by comment_id, and order, asc, desc", () => {
             const orders = ["asc", "desc"];

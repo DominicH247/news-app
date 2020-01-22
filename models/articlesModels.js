@@ -1,4 +1,5 @@
 const connection = require("../db/connection.js");
+const { custom404, custom400 } = require("../errors/customErrors.js");
 
 exports.fetchArticleById = article_id => {
   // commments
@@ -21,10 +22,7 @@ exports.fetchArticleById = article_id => {
     ([articles, comments]) => {
       //if articles or comments array is 0 reject with custom 404
       if (articles.length === 0 || comments.length === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: "404 Not Found - Item does not exist"
-        });
+        return Promise.reject(custom404);
       }
 
       // format article
@@ -83,7 +81,14 @@ exports.fetchAllCommentsByArticleId = (
     .select("comment_id", "author", "votes", "created_at", "body")
     .from("comments")
     .where({ article_id })
-    .orderBy(sort_by, order);
+    .orderBy(sort_by, order)
+    .then(comments => {
+      console.log(comments);
+      if (comments.length === 0) {
+        return Promise.reject(custom404);
+      }
+      return comments;
+    });
 };
 
 exports.fetchAllArticles = ({
@@ -119,17 +124,11 @@ exports.fetchAllArticles = ({
       })
       .then(articles => {
         if (articles.length === 0) {
-          return Promise.reject({
-            status: 404,
-            msg: "404 Not Found - Item does not exist"
-          });
+          return Promise.reject(custom404);
         }
         return articles;
       });
   } else {
-    return Promise.reject({
-      status: 400,
-      msg: "400 Bad Request"
-    });
+    return Promise.reject(custom400);
   }
 };
