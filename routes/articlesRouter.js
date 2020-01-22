@@ -8,7 +8,9 @@ const { handleInvalidMethod405 } = require("../errors/index.js");
 const {
   getArticleById,
   patchArticleById,
-  postCommentByArticleId
+  postCommentByArticleId,
+  getAllCommentsByArticleId,
+  getAllArticles
 } = require("../controllers/articlesController.js");
 
 articlesRouter
@@ -17,6 +19,12 @@ articlesRouter
   .patch(patchArticleById)
   .all(handleInvalidMethod405);
 
-articlesRouter.route("/:article_id/comments").post(postCommentByArticleId);
+articlesRouter
+  .route("/:article_id/comments")
+  .post(postCommentByArticleId)
+  .get(getAllCommentsByArticleId)
+  .all(handleInvalidMethod405);
+
+articlesRouter.route("/").get(getAllArticles);
 
 module.exports = articlesRouter;

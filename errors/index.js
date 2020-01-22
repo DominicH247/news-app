@@ -6,8 +6,34 @@ exports.handleCustom = (err, req, res, next) => {
   }
 };
 
+exports.handlePsql404 = (err, req, res, next) => {
+  console.log(err);
+  const psql400Codes = ["42703"];
+  if (psql400Codes.includes(err.code)) {
+    res.status(404).send({ msg: "404 - Not Found" });
+  } else {
+    next(err);
+  }
+};
+
+exports.handleUnprocessable422 = (err, req, res, next) => {
+  console.log(err);
+  const unprocessableCodes = ["23503"];
+  if (unprocessableCodes.includes(err.code)) {
+    res.status(422).send({ msg: "422 Unprocessable Entity" });
+  } else {
+    next(err);
+  }
+};
+
 exports.handleBadRequest400 = (err, req, res, next) => {
-  res.status(400).send({ msg: "400 Bad Request - Invalid data-type" });
+  console.log(err);
+  const badRequestCodes = ["22P02", "23502"];
+  if (badRequestCodes.includes(err.code)) {
+    res.status(400).send({ msg: "400 Bad Request" });
+  } else {
+    next(err);
+  }
 };
 
 exports.handleServerError500 = (err, req, res, next) => {

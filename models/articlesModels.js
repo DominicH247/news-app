@@ -56,39 +56,90 @@ exports.updateArticleById = (article_id, inc_votes) => {
 };
 
 exports.insertCommentByArticleId = (article_id, comment) => {
-  /* Check user and article exists will */
-  const checkUserPromise = connection
-    .from("users")
-    .where({ username: comment.username })
-    .then(user => {
-      return user;
-    });
+  const formattedComment = {
+    article_id,
+    author: comment.username,
+    body: comment.body,
+    votes: 0
+  };
 
-  const checkArticlePromise = connection
-    .from("articles")
+  return connection
+    .from("comments")
     .where({ article_id })
-    .then(article => {
-      return article;
+    .insert(formattedComment)
+    .returning("*")
+    .then(comment => {
+      console.log(comment, "model");
+      return comment[0];
     });
+};
 
-  return Promise.all([checkUserPromise, checkArticlePromise]).then(
-    ([checkedUser, checkArticle]) => {
-      // format comment for db insertion
-      const formattedComment = {
-        author: checkedUser[0].username,
-        article_id: Number(article_id),
-        votes: 0,
-        body: comment.body
-      };
+exports.fetchAllCommentsByArticleId = (
+  // to refactor out map and just use select
+  article_id,
+  { sort_by = "created_at", order = "asc" }
+) => {
+  return connection
+    .from("comments")
+    .where({ article_id })
+    .orderBy(sort_by, order)
+    .then(comments => {
+      const formattedComments = comments.map(comment => {
+        const formatted = {
+          ...comment
+        };
+        delete formatted.article_id;
+        return formatted;
+      });
 
-      // insert formatted comment into comments table
-      return connection
-        .from("comments")
-        .insert(formattedComment)
-        .returning("*")
-        .then(insertedComment => {
-          return insertedComment[0];
-        });
-    }
-  );
+      return formattedComments;
+    });
+};
+
+exports.fetchAllArticles = ({
+  sort_by = "created_at",
+  order = "desc",
+  author,
+  topic
+}) => {
+  console.log(order);
+  // reject id not passed in a valid order
+  if (order === "asc" || order === "desc") {
+    return connection
+      .select(
+        "articles.author",
+        "title",
+        "articles.article_id",
+        "topic",
+        "articles.created_at",
+        "articles.votes"
+      )
+      .from("articles")
+      .count({ comment_count: "comment_id" })
+      .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
+      .groupBy("articles.article_id")
+      .orderBy(sort_by, order)
+      .modify(query => {
+        if (author) {
+          query.where("articles.author", author);
+        }
+        if (topic) {
+          query.where({ topic });
+        }
+      })
+      .then(articles => {
+        if (articles.length === 0) {
+          return Promise.reject({
+            status: 404,
+            msg: "404 Not Found - Item does not exist"
+          });
+        }
+        return articles;
+      });
+  } else {
+    return Promise.reject({
+      status: 400,
+      msg: "400 Bad Request"
+    });
+  }
 };
