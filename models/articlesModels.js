@@ -80,20 +80,10 @@ exports.fetchAllCommentsByArticleId = (
   { sort_by = "created_at", order = "asc" }
 ) => {
   return connection
+    .select("comment_id", "author", "votes", "created_at", "body")
     .from("comments")
     .where({ article_id })
-    .orderBy(sort_by, order)
-    .then(comments => {
-      const formattedComments = comments.map(comment => {
-        const formatted = {
-          ...comment
-        };
-        delete formatted.article_id;
-        return formatted;
-      });
-
-      return formattedComments;
-    });
+    .orderBy(sort_by, order);
 };
 
 exports.fetchAllArticles = ({
