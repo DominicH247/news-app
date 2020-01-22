@@ -554,6 +554,16 @@ describe("/api", () => {
               expect(comment.comment_id).to.equal(1);
             });
         });
+        it.only("Status:200 decrease comment_id votes", () => {
+          return request(app)
+            .patch("/api/comments/1")
+            .send({ inc_votes: -10 })
+            .expect(200)
+            .then(({ body: { comment } }) => {
+              expect(comment.votes).to.equal(6);
+              expect(comment.comment_id).to.equal(1);
+            });
+        });
       });
     });
     describe("DELTE", () => {
