@@ -554,20 +554,14 @@ describe("/api", () => {
               expect(comment.comment_id).to.equal(1);
             });
         });
-        it("Status:200 return original comment unaffected if no inc_votes passed", () => {
-          return request(app)
-            .patch("/api/comments/1")
-            .send({})
-            .expect(200)
-            .then(({ body: { comment } }) => {
-              expect(comment.votes).to.equal(16);
-              expect(comment.comment_id).to.equal(1);
-            });
-        });
       });
     });
     describe("DELTE", () => {
-      describe("Status 204", () => {});
+      it.only("Status 204", () => {
+        return request(app)
+          .delete("/api/comments/1")
+          .expect(204);
+      });
     });
     /* ERRORS /api/comments/:comment_id */
     describe("ERRORS", () => {
@@ -586,6 +580,15 @@ describe("/api", () => {
             return request(app)
               .patch("/api/comments/1")
               .send({ inc_votes: "invalid-votes" })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("400 Bad Request");
+              });
+          });
+          it("STATUS: 400, missing fields", () => {
+            return request(app)
+              .patch("/api/comments/1")
+              .send({})
               .expect(400)
               .then(({ body: { msg } }) => {
                 expect(msg).to.equal("400 Bad Request");
