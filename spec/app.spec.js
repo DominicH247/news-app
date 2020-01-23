@@ -283,7 +283,6 @@ describe("/api", () => {
               .get(`/api/articles?author=lurker&topic=mitch`)
               .expect(200)
               .then(({ body: { articles } }) => {
-                console.log(articles);
                 expect(articles).to.eql([]);
               });
           });
@@ -292,7 +291,6 @@ describe("/api", () => {
               .get(`/api/articles?author=butter_bridge&topic=paper`)
               .expect(200)
               .then(({ body: { articles } }) => {
-                console.log(articles);
                 expect(articles).to.eql([]);
               });
           });
@@ -439,7 +437,7 @@ describe("/api", () => {
         });
         /* Invalid methods already covered */
       });
-      /* ENDPOINT /api/articles/:article_id/comments  */
+      /* ENDPOINT /api/articles/:article_id/comments */
       describe("/comments", () => {
         describe("POST", () => {
           it("Status: 201, responds with newly posted comment", () => {
@@ -670,7 +668,7 @@ describe("/api", () => {
         describe("BAD REQUEST", () => {
           it("STATUS 400, posting to non-existant comment_id", () => {
             return request(app)
-              .patch("/api/comments/-1")
+              .patch("/api/comments/100")
               .send({ inc_votes: 10 })
               .expect(400)
               .then(({ body: { msg } }) => {
