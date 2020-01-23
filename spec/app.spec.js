@@ -18,7 +18,29 @@ after(() => connection.destroy());
 describe("/api", () => {
   /* APPLICATION ROUTE */
   describe("GET", () => {
-    // precautionary
+    it("Status: 200, responds with json object, of available routes", () => {
+      return request(app)
+        .get("/api/")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).to.eql({
+            available_routes: [
+              "GET - /api",
+              "GET - /api/topics",
+              "GET - /api/users/:username",
+              "GET - /api/articles",
+              "GET - /api/articles/:article_id",
+              "PATCH - /api/articles/:article_id",
+              "POST - /api/articles/article_id/comments",
+              "GET - /api/articles/article_id/comments",
+              "PATCH - /api/comments/:comment_id",
+              "DELETE - /api/comments/:comment_id"
+            ]
+          });
+        });
+    });
+
+    // ERRORS /api/
     describe("ERROR - INVALID APPLICATION PATH", () => {
       it("STATUS: 404, responds with error msg", () => {
         return request(app)
