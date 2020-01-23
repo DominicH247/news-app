@@ -24,5 +24,10 @@ exports.removeCommentById = comment_id => {
   return connection
     .from("comments")
     .where({ comment_id })
-    .del();
+    .del()
+    .then(deleteCount => {
+      if (deleteCount === 0) {
+        return Promise.reject(custom404);
+      }
+    });
 };

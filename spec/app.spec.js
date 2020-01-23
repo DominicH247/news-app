@@ -607,5 +607,28 @@ describe("/api", () => {
         });
       });
     });
+    describe("DELETE", () => {
+      describe("NOT FOUND", () => {
+        it("STATUS 404, deleting from non-existant comment_id returns error msg", () => {
+          return request(app)
+            .delete("/api/comments/1000")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("404 Not Found - Item does not exist");
+            });
+        });
+        describe("BAD REQUEST", () => {
+          it("STATUS: 400, comment_id, invalid, returns error message", () => {
+            return request(app)
+              .delete("/api/comments/NOT-VALID-COMMENT-ID")
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("400 Bad Request");
+              });
+          });
+        });
+      });
+    });
+    // NO COMMENT ID
   });
 });
