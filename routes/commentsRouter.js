@@ -1,6 +1,9 @@
 const express = require("express");
 const commentsRouter = express.Router();
 
+// error handlers
+const { handleInvalidMethod405 } = require("../errors/index.js");
+
 // controllers
 const {
   patchCommentById,
@@ -11,6 +14,7 @@ const {
 commentsRouter
   .route("/:comment_id")
   .patch(patchCommentById)
-  .delete(deleteCommentById);
+  .delete(deleteCommentById)
+  .all(handleInvalidMethod405);
 
 module.exports = commentsRouter;

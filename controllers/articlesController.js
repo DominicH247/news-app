@@ -7,6 +7,12 @@ const {
   fetchAllArticles
 } = require("../models/articlesModels.js");
 
+//users model
+const { checkUsernameExists } = require("../models/usersModels.js");
+
+// topics model
+const { checkTopicExists } = require("../models/topicsModels.js");
+
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
 
@@ -50,10 +56,55 @@ exports.getAllCommentsByArticleId = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
+  console.log(req.query);
+  const arrayOfPromises = [];
+
+  // topic exists but no article
+  // checkTopic exists
+  // fetch all articles
+  if (req.query.hasOwnProperty("topic")) {
+    arrayOfPromises.push(
+      checkTopicExists(req.query),
+      fetchAllArticles(req.query)
+    );
+    Promise.all(arrayOfPromises)
+      .then(([topic, articles]) => {
+        res.status(200).send({ articles });
+      })
+      .catch(next);
+  }
+
+  // author exists but no article
+  // check author
+  // fetch all articles
+  if (req.query.hasOwnProperty("author")) {
+    arrayOfPromises.push(
+      checkUsernameExists(req.query),
+      fetchAllArticles(req.query)
+    );
+    Promise.all(arrayOfPromises)
+      .then(([author, articles]) => {
+        res.status(200).send({ articles });
+      })
+      .catch(next);
+  }
+
+  // everything valid
   fetchAllArticles(req.query)
     .then(articles => {
-      console.log({ articles }, "CONTROLLER");
       res.status(200).send({ articles });
     })
     .catch(next);
+  // fetch all articles no query
+  // if(req.query)
+
+  // if (req.query.hasOwnProperty(author) && req.query.hasOwnProperty(topic)) {
+  //   arrayOfPromises.push(fetchAllArticles(req.query));
+  // } else if (req.query.hasOwnProperty(author) && !req.query.hasOwnProperty(topic)) {
+  //   arrayOfPromises.push()
+  // }
+
+  // const checkUserPromise = checkUsernameExists(req.query);
+  // const checkTopicPromise = checkTopicExists(req.query);
+  // arrayOfPromises.push(checkUserPromise, checkTopicPromise);
 };

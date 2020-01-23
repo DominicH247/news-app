@@ -98,7 +98,6 @@ exports.fetchAllArticles = ({
   author,
   topic
 }) => {
-  console.log(order);
   // reject id not passed in a valid order
   if (order === "asc" || order === "desc") {
     return connection
@@ -122,13 +121,11 @@ exports.fetchAllArticles = ({
         if (topic) {
           query.where({ topic });
         }
-      })
-      .then(articles => {
-        if (articles.length === 0) {
-          return Promise.reject(custom404);
-        }
-        return articles;
       });
+    // .then(articles => {
+    //   console.log(articles, "< model");
+    //   return articles;
+    // });
   } else {
     return Promise.reject(custom400);
   }
