@@ -23,7 +23,7 @@ exports.fetchArticleById = article_id => {
     ([articles, comments]) => {
       //if articles or comments array is 0 reject with custom 404
       if (articles.length === 0 || comments.length === 0) {
-        return Promise.reject(custom404);
+        return articles;
       }
 
       // format article

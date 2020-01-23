@@ -34,7 +34,7 @@ describe("/api", () => {
   /* TOPICS END POINT */
   describe("/topics", () => {
     describe("GET", () => {
-      it("STATUS: 200, responds with an object with an array of objects, nesteted within, on the key of topics", () => {
+      it("STATUS: 200, responds with an array of objects, nesteted within, on the key of topics", () => {
         // expect array
         // expect length of array = length of test db topics item
         // expect first item in topics array to be object with expected keys
@@ -307,7 +307,7 @@ describe("/api", () => {
             });
         });
 
-        it("STATUS: 404, query valid but item does not exist, returns error message", () => {
+        it("STATUS: 404, query valid but topic does not exist, returns error message", () => {
           return request(app)
             .get("/api/articles?topic=NOT-VALID-TOPIC")
             .expect(404)
@@ -316,7 +316,7 @@ describe("/api", () => {
             });
         });
 
-        it("STATUS: 404, query valid but author does not exist but topic does", () => {
+        it("STATUS: 404, query valid author does not exist but topic does", () => {
           return request(app)
             .get("/api/articles?author=DOES-NOT-EIXST&topic=mitch")
             .expect(404)
@@ -376,6 +376,14 @@ describe("/api", () => {
               expect(article.article_id).to.equal(1);
             });
         });
+        it("status: 200, responds with empty array if article_id does not exist", () => {
+          return request(app)
+            .get("/api/articles/1000")
+            .expect(200)
+            .then(({ body: { article } }) => {
+              expect(article).to.eql([]);
+            });
+        });
         describe("PATCH", () => {
           it("status: 200, takes object for vote change, respond with the updated article", () => {
             return request(app)
@@ -389,16 +397,6 @@ describe("/api", () => {
         });
         /* ARTICLES /:article_id END POINT ERRORS */
         describe("ERROR - GET", () => {
-          describe("NOT FOUND", () => {
-            it("STATUS: 404, responds with error message", () => {
-              return request(app)
-                .get("/api/articles/1000")
-                .expect(404)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal("404 Not Found - Item does not exist");
-                });
-            });
-          });
           describe("BAD REQUEST", () => {
             it("STATUS:400, invalid id ", () => {
               return request(app)
