@@ -11,7 +11,10 @@ const commentsRouter = require("./commentsRouter.js");
 const { getAllRoutes } = require("../controllers/apiController.js");
 
 // error handler
-const { handleInvalidPath404 } = require("../errors/index.js");
+const {
+  handleInvalidPath404,
+  handleInvalidMethod405
+} = require("../errors/index.js");
 
 // api paths
 apiRouter.use("/topics", topicsRouter);
@@ -20,7 +23,10 @@ apiRouter.use("/articles", articlesRouter);
 apiRouter.use("/comments", commentsRouter);
 
 // api home route
-apiRouter.route("/").get(getAllRoutes);
+apiRouter
+  .route("/")
+  .get(getAllRoutes)
+  .all(handleInvalidMethod405);
 
 // invalid paths - overkill...
 apiRouter.use("/*", handleInvalidPath404);
