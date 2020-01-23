@@ -7,7 +7,8 @@ const testData = require("./test-data/index.js");
 
 const data = {
   development: devData,
-  test: testData
+  test: testData,
+  production: devData
 };
 
 module.exports = data[ENV];
