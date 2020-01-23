@@ -56,7 +56,6 @@ exports.getAllCommentsByArticleId = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  console.log(req.query);
   const arrayOfPromises = [];
 
   // topic exists but no article
@@ -95,16 +94,4 @@ exports.getAllArticles = (req, res, next) => {
       res.status(200).send({ articles });
     })
     .catch(next);
-  // fetch all articles no query
-  // if(req.query)
-
-  // if (req.query.hasOwnProperty(author) && req.query.hasOwnProperty(topic)) {
-  //   arrayOfPromises.push(fetchAllArticles(req.query));
-  // } else if (req.query.hasOwnProperty(author) && !req.query.hasOwnProperty(topic)) {
-  //   arrayOfPromises.push()
-  // }
-
-  // const checkUserPromise = checkUsernameExists(req.query);
-  // const checkTopicPromise = checkTopicExists(req.query);
-  // arrayOfPromises.push(checkUserPromise, checkTopicPromise);
 };

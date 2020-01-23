@@ -266,6 +266,37 @@ describe("/api", () => {
               expect(articles).to.eql([]);
             });
         });
+        describe("query by topic and author", () => {
+          it("status: 200, returns array of articles by author and topic", () => {
+            return request(app)
+              .get(`/api/articles?author=butter_bridge&topic=mitch`)
+              .expect(200)
+              .then(({ body: { articles } }) => {
+                expect(articles[0].topic).to.equal("mitch");
+                expect(articles[0].author).to.equal("butter_bridge");
+                expect(articles[2].topic).to.equal("mitch");
+                expect(articles[2].author).to.equal("butter_bridge");
+              });
+          });
+          it("status: 200, returns empty array, if topic exists, but author has no articles", () => {
+            return request(app)
+              .get(`/api/articles?author=lurker&topic=mitch`)
+              .expect(200)
+              .then(({ body: { articles } }) => {
+                console.log(articles);
+                expect(articles).to.eql([]);
+              });
+          });
+          it("status: 200, returns empty array, if topic and author exists, but topic has no articles", () => {
+            return request(app)
+              .get(`/api/articles?author=butter_bridge&topic=paper`)
+              .expect(200)
+              .then(({ body: { articles } }) => {
+                console.log(articles);
+                expect(articles).to.eql([]);
+              });
+          });
+        });
       });
       /* ERROR api/articles */
       describe("NOT FOUND", () => {
@@ -286,8 +317,27 @@ describe("/api", () => {
               expect(msg).to.equal("404 Not Found - Topic does not exist");
             });
         });
+
+        it("STATUS: 404, query valid but author does not exist but topic does", () => {
+          return request(app)
+            .get("/api/articles?author=DOES-NOT-EIXST&topic=mitch")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("404 Not Found - User does not exist");
+            });
+        });
+
+        it("STATUS: 404, query valid topic does not exist but author does", () => {
+          return request(app)
+            .get("/api/articles?author=lurker&topic=NOT-A-TOPIC")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("404 Not Found - Topic does not exist");
+            });
+        });
+
         describe("BAD REQUEST", () => {
-          it.only("STATUS: 400, bad request, order invalid", () => {
+          it("STATUS: 400, bad request, order invalid", () => {
             return request(app)
               .get("/api/articles?order=NOT-VALID")
               .expect(400)
