@@ -68,7 +68,6 @@ exports.insertCommentByArticleId = (article_id, comment) => {
     .insert(formattedComment)
     .returning("*")
     .then(comment => {
-      console.log(comment, "model");
       return comment[0];
     });
 };
@@ -82,14 +81,7 @@ exports.fetchAllCommentsByArticleId = (
     .select("comment_id", "author", "votes", "created_at", "body")
     .from("comments")
     .where({ article_id })
-    .orderBy(sort_by, order)
-    .then(comments => {
-      console.log(comments);
-      if (comments.length === 0) {
-        return Promise.reject(custom404);
-      }
-      return comments;
-    });
+    .orderBy(sort_by, order);
 };
 
 exports.fetchAllArticles = ({
@@ -122,10 +114,6 @@ exports.fetchAllArticles = ({
           query.where({ topic });
         }
       });
-    // .then(articles => {
-    //   console.log(articles, "< model");
-    //   return articles;
-    // });
   } else {
     return Promise.reject(custom400);
   }

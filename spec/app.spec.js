@@ -336,6 +336,15 @@ describe("/api", () => {
             });
         });
 
+        it("STATUS: 404, query valid topic and author does not exist", () => {
+          return request(app)
+            .get("/api/articles?author=NOT-A-USER&topic=NOT-A-TOPIC")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("404 Not Found - Topic does not exist");
+            });
+        });
+
         describe("BAD REQUEST", () => {
           it("STATUS: 400, bad request, order invalid", () => {
             return request(app)
@@ -385,10 +394,20 @@ describe("/api", () => {
           describe("NOT FOUND", () => {
             it("STATUS: 404, responds with error message", () => {
               return request(app)
-                .get("/api/articles/-1")
+                .get("/api/articles/1000")
                 .expect(404)
                 .then(({ body: { msg } }) => {
                   expect(msg).to.equal("404 Not Found - Item does not exist");
+                });
+            });
+          });
+          describe("BAD REQUEST", () => {
+            it("STATUS:400, invalid id ", () => {
+              return request(app)
+                .get("/api/articles/NOT-VALID-ID")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("400 Bad Request");
                 });
             });
           });
@@ -447,19 +466,24 @@ describe("/api", () => {
               .get("/api/articles/1/comments")
               .expect(200)
               .then(({ body: { comments } }) => {
-                if (comments.length !== 0) {
-                  expect(comments[1]).to.have.all.keys([
-                    "comment_id",
-                    "author",
-                    "votes",
-                    "created_at",
-                    "body"
-                  ]);
-                } else {
-                  expect(comments.length).to.equal(0);
-                }
+                expect(comments[1]).to.have.all.keys([
+                  "comment_id",
+                  "author",
+                  "votes",
+                  "created_at",
+                  "body"
+                ]);
               });
           });
+          it("status: 200, responds with empty array if article exists but has no comments", () => {
+            return request(app)
+              .get("/api/articles/2/comments")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments).to.eql([]);
+              });
+          });
+
           it("accepts query sort_by comment_id, and order, asc, desc", () => {
             const orders = ["asc", "desc"];
 
@@ -593,9 +617,9 @@ describe("/api", () => {
         });
         describe("GET", () => {
           describe("NOT FOUND", () => {
-            it("404 - NOT FOUND,  query not valid", () => {
+            it("404 - NOT FOUND, query not valid", () => {
               return request(app)
-                .get("/api/articles/article_id/comments?sort_by=NOT-VALID")
+                .get("/api/articles/1/comments?sort_by=NOT-VALID")
                 .expect(404)
                 .then(({ body: { msg } }) => {
                   expect(msg).to.equal("404 - Not Found");
@@ -603,7 +627,6 @@ describe("/api", () => {
             });
           });
         });
-        //TODO GET comments by article id and error handlers
       });
     });
   });

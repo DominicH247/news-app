@@ -56,41 +56,26 @@ exports.getAllCommentsByArticleId = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  const arrayOfPromises = [];
+  const arrayOfPromises = [fetchAllArticles(req.query)];
 
   // topic exists but no article
   // checkTopic exists
   // fetch all articles
   if (req.query.hasOwnProperty("topic")) {
-    arrayOfPromises.push(
-      checkTopicExists(req.query),
-      fetchAllArticles(req.query)
-    );
-    Promise.all(arrayOfPromises)
-      .then(([topic, articles]) => {
-        res.status(200).send({ articles });
-      })
-      .catch(next);
+    arrayOfPromises.push(checkTopicExists(req.query));
   }
 
   // author exists but no article
   // check author
   // fetch all articles
   if (req.query.hasOwnProperty("author")) {
-    arrayOfPromises.push(
-      checkUsernameExists(req.query),
-      fetchAllArticles(req.query)
-    );
-    Promise.all(arrayOfPromises)
-      .then(([author, articles]) => {
-        res.status(200).send({ articles });
-      })
-      .catch(next);
+    arrayOfPromises.push(checkUsernameExists(req.query));
   }
 
   // everything valid
-  fetchAllArticles(req.query)
-    .then(articles => {
+
+  Promise.all(arrayOfPromises)
+    .then(([articles]) => {
       res.status(200).send({ articles });
     })
     .catch(next);
