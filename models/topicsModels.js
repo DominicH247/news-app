@@ -4,12 +4,7 @@ const connection = require("../db/connection.js");
 const { custom404Topic } = require("../errors/customErrors.js");
 
 exports.fecthAllTopics = () => {
-  return connection
-    .select("*")
-    .from("topics")
-    .then(topics => {
-      return topics;
-    });
+  return connection.select("*").from("topics");
 };
 
 exports.checkTopicExists = ({ topic }) => {
