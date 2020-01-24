@@ -25,6 +25,9 @@ articlesRouter
   .get(getAllCommentsByArticleId)
   .all(handleInvalidMethod405);
 
-articlesRouter.route("/").get(getAllArticles);
+articlesRouter
+  .route("/")
+  .get(getAllArticles)
+  .all(handleInvalidMethod405);
 
 module.exports = articlesRouter;
