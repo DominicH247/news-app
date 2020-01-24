@@ -6,17 +6,6 @@ exports.handleCustom = (err, req, res, next) => {
   }
 };
 
-exports.handlePsql404 = (err, req, res, next) => {
-  console.log(err);
-  // const psql400Codes = ["42703"];
-  // if (psql400Codes.includes(err.code)) {
-  //   res.status(404).send({ msg: "404 - Not Found" });
-  // } else {
-  //   next(err);
-  // }
-  next(err);
-};
-
 exports.handleUnprocessable422 = (err, req, res, next) => {
   const unprocessableCodes = ["23503"];
   if (unprocessableCodes.includes(err.code)) {
