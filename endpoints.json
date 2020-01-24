@@ -9,19 +9,114 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "GET /api/users/:username": {
+    "description": " servers a user object",
+    "queries": [],
+    "exampleResponse": {
+      "user": {
+        "username": "happyamy2016",
+        "avatar_url": "https://vignette1.wikia.nocookie.net/mrmen/images/7/7f/Mr_Happy.jpg/revision/latest?cb=20140102171729",
+        "name": "Amy Happy"
+      }
+    }
+  },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
+    "description": "serves an array of all articles",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
           "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
+          "title": "Seafood substitutions are increasing",
+          "article_id": 33,
+          "topic": "cooking",
+          "votes": 0,
+          "created_at": "2018-05-30T16: 59: 13.341Z"
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an article object for the given article_id",
+    "queries": [],
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Running a Node App",
+        "votes": 50,
+        "topic": "coding",
+        "author": "jessjelly",
+        "created_at": "2016-08-18T13:07:52.389Z",
+        "comment_count": 8,
+        "body": "Some content for the article body."
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "patches the number of voted for the given article id, responds with the updated article object",
+    "exampleRequestBody": { "inc_votes": 10 },
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Running a Node App",
+        "votes": 50,
+        "topic": "coding",
+        "author": "jessjelly",
+        "created_at": "2016-08-18T13:07:52.389Z",
+        "comment_count": 8,
+        "body": "Some content for the article body."
+      }
+    }
+  },
+  "POST /api/articles/:article_id/commments": {
+    "description": "post a comment to an existing article_id, responds with the comment object",
+    "exampleRequestBody": { "username": "jessjelly", "body": "hello world!" },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 205,
+        "votes": 0,
+        "created_at": "2016-08-18T13:07:52.389Z",
+        "author": "jessjelly",
+        "body": "hello world!"
+      }
+    }
+  },
+  "GET /api/articles/:article_id/commments": {
+    "description": "serves an array of comments for the specified article_id",
+    "queries": ["sort_by", "order"],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 31,
+          "author": "weegembump",
+          "votes": 11,
+          "created_at": "2016-02-01T02:29:55.551Z",
+          "body": "a comment"
+        },
+        {
+          "comment_id": 33,
+          "author": "cooljmessy",
+          "votes": 4,
+          "created_at": "2016-05-13T07:34:27.403Z",
+          "body": "Another comment"
+        }
+      ]
+    }
+  },
+  "PATCH /api/commments/:comment_id": {
+    "description": "patch the existing number of comment votes for an existing comment_id",
+    "exampleRequestBody": { "inc_votes": 1 },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 31,
+        "author": "weegembump",
+        "votes": 12,
+        "created_at": "2016-02-01T02:29:55.551Z",
+        "body": "a comment"
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "delete an existing comment"
   }
 }

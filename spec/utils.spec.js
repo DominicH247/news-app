@@ -179,8 +179,6 @@ describe("formatComments utility function should be able to take an array of com
       }
     ];
 
-    const test = formatComments(testData, testRefObj);
-
     expect(formatComments(testData, testRefObj)).to.eql(testOutput);
   });
   it("Multiple inputs within the array", () => {
