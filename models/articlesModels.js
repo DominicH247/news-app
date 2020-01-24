@@ -113,6 +113,17 @@ exports.fetchAllArticles = ({
         if (topic) {
           query.where({ topic });
         }
+      })
+      .then(articles => {
+        // convert comment_count to int to allow sort_by votes to work correctly
+        const formattedArticles = articles.map(article => {
+          const formatted = {
+            ...article,
+            comment_count: Number(article.comment_count)
+          };
+          return formatted;
+        });
+        return formattedArticles;
       });
   } else {
     return Promise.reject(custom400);
