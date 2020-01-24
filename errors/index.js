@@ -7,12 +7,14 @@ exports.handleCustom = (err, req, res, next) => {
 };
 
 exports.handlePsql404 = (err, req, res, next) => {
-  const psql400Codes = ["42703"];
-  if (psql400Codes.includes(err.code)) {
-    res.status(404).send({ msg: "404 - Not Found" });
-  } else {
-    next(err);
-  }
+  console.log(err);
+  // const psql400Codes = ["42703"];
+  // if (psql400Codes.includes(err.code)) {
+  //   res.status(404).send({ msg: "404 - Not Found" });
+  // } else {
+  //   next(err);
+  // }
+  next(err);
 };
 
 exports.handleUnprocessable422 = (err, req, res, next) => {
@@ -25,7 +27,7 @@ exports.handleUnprocessable422 = (err, req, res, next) => {
 };
 
 exports.handleBadRequest400 = (err, req, res, next) => {
-  const badRequestCodes = ["22P02", "23502"];
+  const badRequestCodes = ["22P02", "23502", "42703"];
   if (badRequestCodes.includes(err.code)) {
     res.status(400).send({ msg: "400 Bad Request" });
   } else {

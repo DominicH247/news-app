@@ -279,7 +279,6 @@ describe("/api", () => {
       });
       it("query sort by author", () => {
         const orders = ["asc", "desc"];
-
         const ordersPromises = orders.map(order => {
           return request(app)
             .get(`/api/articles?sort_by=author&order=${order}`)
@@ -489,6 +488,15 @@ describe("/api", () => {
               .get("/api/articles?order=NOT-VALID")
               .expect(400)
               .then(({ body: { msg } }) => {
+                expect(msg).to.equal("400 Bad Request");
+              });
+          });
+          it("STATUS: 400, bad request invalid sort_by", () => {
+            return request(app)
+              .get("/api/articles?sort_by=NOT-A-VALID-COLUMN")
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                console.log(msg);
                 expect(msg).to.equal("400 Bad Request");
               });
           });
@@ -749,16 +757,12 @@ describe("/api", () => {
                   expect(msg).to.equal("400 Bad Request");
                 });
             });
-          });
-        });
-        describe("GET", () => {
-          describe("NOT FOUND", () => {
-            it("404 - NOT FOUND, query not valid", () => {
+            it("400 - query not valid", () => {
               return request(app)
                 .get("/api/articles/1/comments?sort_by=NOT-VALID")
-                .expect(404)
+                .expect(400)
                 .then(({ body: { msg } }) => {
-                  expect(msg).to.equal("404 - Not Found");
+                  expect(msg).to.equal("400 Bad Request");
                 });
             });
           });
