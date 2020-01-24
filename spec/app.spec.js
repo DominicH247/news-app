@@ -155,8 +155,8 @@ describe("/api", () => {
             expect(articles).to.be.a("array");
             expect(articles.length).to.equal(12);
             expect(articles).to.be.sortedBy("created_at", { descending: true });
-            expect(articles[1].comment_count).to.equal("0");
-            expect(articles[8].comment_count).to.equal("2");
+            expect(articles[1].comment_count).to.equal(0);
+            expect(articles[8].comment_count).to.equal(2);
           });
       });
       it("query sort by author", () => {
