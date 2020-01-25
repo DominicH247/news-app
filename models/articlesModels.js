@@ -3,37 +3,31 @@ const connection = require("../db/connection.js");
 const { custom404Article, custom400 } = require("../errors/customErrors.js");
 
 exports.fetchArticleById = article_id => {
-  // commments
-  const commentsPromise = connection
-    .from("comments")
-    .where({ article_id })
-    .then(comment => {
-      return comment;
-    });
-
-  // articles
-  const articlePromise = connection
+  return connection
+    .select(
+      "articles.author",
+      "title",
+      "articles.article_id",
+      "articles.body",
+      "topic",
+      "articles.created_at",
+      "articles.votes"
+    )
     .from("articles")
-
-    .where({ article_id })
+    .count({ comment_count: "comment_id" })
+    .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
+    .groupBy("articles.article_id")
+    .modify(query => {
+      if (article_id) {
+        query.where("articles.article_id", article_id);
+      }
+    })
     .then(article => {
-      return article;
-    });
-
-  return Promise.all([articlePromise, commentsPromise]).then(
-    ([articles, comments]) => {
-      //if articles or comments array is 0 reject with custom 404
-      if (articles.length === 0) {
+      if (article.length === 0) {
         return Promise.reject(custom404Article);
       }
-
-      // format article
-      const comment_count = comments.length;
-      const articleFormatted = { ...articles[0], comment_count };
-
-      return articleFormatted;
-    }
-  );
+      return article[0];
+    });
 };
 
 exports.updateArticleById = (article_id, inc_votes = 0) => {
