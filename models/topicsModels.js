@@ -18,3 +18,13 @@ exports.checkTopicExists = ({ topic }) => {
       return topic;
     });
 };
+
+exports.insertTopic = newTopicData => {
+  return connection
+    .from("topics")
+    .insert(newTopicData)
+    .returning("*")
+    .then(insertedTopic => {
+      return insertedTopic[0];
+    });
+};

@@ -173,6 +173,20 @@ describe("/api", () => {
 
   /* TOPICS END POINT */
   describe("/topics", () => {
+    describe("POST", () => {
+      it("Status: 201, post new topic, returns the posted topic", () => {
+        return request(app)
+          .post("/api/topics")
+          .send({ slug: "new topic", description: "a description" })
+          .expect(201)
+          .then(({ body: { topic } }) => {
+            expect(topic).to.eql({
+              slug: "new topic",
+              description: "a description"
+            });
+          });
+      });
+    });
     describe("GET", () => {
       it("STATUS: 200, responds with an array of objects, nesteted within, on the key of topics", () => {
         // expect array
@@ -188,7 +202,7 @@ describe("/api", () => {
             expect(topics[0]).to.have.all.keys(["description", "slug"]);
           });
       });
-      /* TOPICS /tpoics ENDPOINT ERRORS */
+      /* TOPICS /topics ENDPOINT ERRORS */
       describe("ERROR - GET", () => {
         describe("INVALID PATH", () => {
           it("STATUS:404 - responds with error message", () => {
@@ -201,10 +215,32 @@ describe("/api", () => {
           });
         });
       });
+      describe("POST", () => {
+        describe("BAD REQUEST", () => {
+          it("STATUS: 400, missing fields", () => {
+            return request(app)
+              .post("/api/topics")
+              .send({})
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("400 Bad Request");
+              });
+          });
+          it("STATUS:400, topic with slug already exists", () => {
+            return request(app)
+              .post("/api/topics")
+              .send({ slug: "mitch", description: "test" })
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("400 Bad Request - already exists");
+              });
+          });
+        });
+      });
       describe("ERROR - METHODS", () => {
         describe("INVALID METHOD", () => {
           it("STATUS: 405 - responds with error message", () => {
-            const invalidMethods = ["post", "put", "patch", "delete"];
+            const invalidMethods = ["put", "patch", "delete"];
 
             const methodPromises = invalidMethods.map(method => {
               return request(app)
@@ -286,7 +322,7 @@ describe("/api", () => {
         /* Invalid Methods on users endpoint already covered via 
         testing in the topics end point */
         describe("POST", () => {
-          describe.only("BAD REQUEST", () => {
+          describe("BAD REQUEST", () => {
             it("STATUS:400, missing fields", () => {
               return request(app)
                 .post("/api/users")
@@ -306,9 +342,7 @@ describe("/api", () => {
                 })
                 .expect(400)
                 .then(({ body: { msg } }) => {
-                  expect(msg).to.equal(
-                    "400 Bad Request - username already exists"
-                  );
+                  expect(msg).to.equal("400 Bad Request - already exists");
                 });
             });
           });
@@ -548,7 +582,6 @@ describe("/api", () => {
               .get("/api/articles?sort_by=NOT-A-VALID-COLUMN")
               .expect(400)
               .then(({ body: { msg } }) => {
-                console.log(msg);
                 expect(msg).to.equal("400 Bad Request");
               });
           });

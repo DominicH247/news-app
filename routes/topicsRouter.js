@@ -2,7 +2,7 @@ const express = require("express");
 const topicsRouter = express.Router();
 
 // controllers
-const { getTopics } = require("../controllers/topicsController.js");
+const { getTopics, postTopic } = require("../controllers/topicsController.js");
 
 // error handlers
 const { handleInvalidMethod405 } = require("../errors/index.js");
@@ -11,6 +11,7 @@ const { handleInvalidMethod405 } = require("../errors/index.js");
 topicsRouter
   .route("/")
   .get(getTopics)
+  .post(postTopic)
   .all(handleInvalidMethod405);
 
 module.exports = topicsRouter;

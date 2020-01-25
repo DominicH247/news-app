@@ -20,9 +20,7 @@ exports.handleBadRequest400 = (err, req, res, next) => {
 
   if (badRequestCodes.includes(err.code)) {
     if (err.code === "23505") {
-      res
-        .status(400)
-        .send({ msg: "400 Bad Request - username already exists" });
+      res.status(400).send({ msg: "400 Bad Request - already exists" });
     } else {
       res.status(400).send({ msg: "400 Bad Request" });
     }

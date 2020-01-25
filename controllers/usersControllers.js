@@ -26,7 +26,6 @@ exports.postUser = (req, res, next) => {
 
   insertUser(newUserData)
     .then(user => {
-      console.log({ user });
       res.status(201).send({ user });
     })
     .catch(next);
