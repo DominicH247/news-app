@@ -1,11 +1,11 @@
 const connection = require("../db/connection.js");
 const { custom404, custom400 } = require("../errors/customErrors.js");
 
-exports.updateCommentById = (comment_id, inc_votes) => {
+exports.updateCommentById = (comment_id, inc_votes = 0) => {
   // reject if missing inv_votes
-  if (inc_votes === undefined) {
-    return Promise.reject(custom400);
-  }
+  // if (inc_votes === undefined) {
+  //   return Promise.reject(custom400);
+  // }
 
   return connection
     .from("comments")
