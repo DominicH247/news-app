@@ -14,6 +14,10 @@ exports.fetchUserByUsername = username => {
     });
 };
 
+exports.fetchAllUsers = () => {
+  return connection.from("users");
+};
+
 exports.checkUsernameExists = ({ author }) => {
   return connection
     .from("users")

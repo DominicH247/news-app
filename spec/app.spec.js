@@ -223,6 +223,16 @@ describe("/api", () => {
 
   /* USERS END POINT */
   describe("/users", () => {
+    describe("GET", () => {
+      it("Status: 200, responds with array of all user objects", () => {
+        return request(app)
+          .get("/api/users")
+          .expect(200)
+          .then(({ body: { users } }) => {
+            expect(users.length).to.equal(4);
+          });
+      });
+    });
     describe("/users/:username", () => {
       describe("GET", () => {
         it("STATUS: 200, responds with a user object for the given username", () => {

@@ -5,7 +5,15 @@ const usersRouter = express.Router();
 const { handleInvalidMethod405 } = require("../errors/index.js");
 
 // controllers
-const { getUserByUsername } = require("../controllers/usersControllers.js");
+const {
+  getUserByUsername,
+  getAllUsers
+} = require("../controllers/usersControllers.js");
+
+usersRouter
+  .route("/")
+  .get(getAllUsers)
+  .all(handleInvalidMethod405);
 
 usersRouter
   .route("/:username")
