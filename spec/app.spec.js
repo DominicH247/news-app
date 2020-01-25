@@ -524,135 +524,148 @@ describe("/api", () => {
           });
         });
       });
-      /* ERROR api/articles */
-      describe("NOT FOUND", () => {
-        it("STATUS: 404, query valid but author does not exist, returns error message", () => {
+      describe("POST", () => {
+        it("Status:201, post new article, responds with the new article", () => {
+          // Errors
+          // bad request - no body, user not exist, topic doesnt exist, invalid datatype
           return request(app)
-            .get("/api/articles?author=NOT-A-REAL-AUTHOR")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal("404 Not Found - User does not exist");
-            });
-        });
-
-        it("STATUS: 404, query valid but topic does not exist, returns error message", () => {
-          return request(app)
-            .get("/api/articles?topic=NOT-VALID-TOPIC")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal("404 Not Found - Topic does not exist");
-            });
-        });
-
-        it("STATUS: 404, query valid author does not exist but topic does", () => {
-          return request(app)
-            .get("/api/articles?author=DOES-NOT-EIXST&topic=mitch")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal("404 Not Found - User does not exist");
-            });
-        });
-
-        it("STATUS: 404, query valid topic does not exist but author does", () => {
-          return request(app)
-            .get("/api/articles?author=lurker&topic=NOT-A-TOPIC")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal("404 Not Found - Topic does not exist");
-            });
-        });
-
-        it("STATUS: 404, query valid topic and author does not exist", () => {
-          return request(app)
-            .get("/api/articles?author=NOT-A-USER&topic=NOT-A-TOPIC")
-            .expect(404);
-        });
-
-        describe("BAD REQUEST", () => {
-          it("STATUS: 400, bad request, order invalid", () => {
-            return request(app)
-              .get("/api/articles?order=NOT-VALID")
-              .expect(400)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal("400 Bad Request");
-              });
-          });
-          it("STATUS: 400, bad request invalid sort_by", () => {
-            return request(app)
-              .get("/api/articles?sort_by=NOT-A-VALID-COLUMN")
-              .expect(400)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal("400 Bad Request");
-              });
-          });
-        });
-      });
-    });
-
-    /* ENDPOINT /api/articles/article:id */
-    describe("/:article_id", () => {
-      describe("GET", () => {
-        it("status: 200, responds with array of article objects", () => {
-          return request(app)
-            .get("/api/articles/1")
-            .expect(200)
+            .post("/api/articles")
+            .send({
+              username: "lurker",
+              topic: "mitch",
+              title: "Test title",
+              body: "test"
+            })
+            .expect(201)
             .then(({ body: { article } }) => {
               expect(article).to.have.all.keys([
                 "author",
                 "title",
-                "article_id",
-                "body",
                 "topic",
-                "created_at",
+                "body",
+                "article_id",
                 "votes",
-                "comment_count"
+                "comment_count",
+                "created_at"
               ]);
-              expect(article.article_id).to.equal(1);
             });
         });
-        describe("PATCH", () => {
-          it("status: 200, takes object for vote change, respond with the updated article", () => {
+        /* ERROR api/articles */
+        describe("NOT FOUND", () => {
+          it("STATUS: 404, query valid but author does not exist, returns error message", () => {
             return request(app)
-              .patch("/api/articles/1")
-              .send({ inc_votes: 100 })
-              .expect(200)
-              .then(({ body: { article } }) => {
-                expect(article.votes).to.equal(200);
-              });
-          });
-          it("status: 200, sending an empty body returns the article unaffected", () => {
-            return request(app)
-              .patch("/api/articles/1")
-              .send({})
-              .expect(200)
-              .then(({ body: { article } }) => {
-                expect(article.votes).to.equal(100);
-              });
-          });
-        });
-        describe("DELETE", () => {
-          it("status: 204, delete article returns nothing", () => {
-            return request(app)
-              .delete("/api/articles/1")
-              .expect(204)
-              .then(() => {
-                return request(app)
-                  .get("/api/articles/1/comments")
-                  .expect(404);
-              })
+              .get("/api/articles?author=NOT-A-REAL-AUTHOR")
+              .expect(404)
               .then(({ body: { msg } }) => {
-                expect(msg).to.equal("404 Not Found - Article does not exist");
+                expect(msg).to.equal("404 Not Found - User does not exist");
               });
           });
-        });
 
-        /* ARTICLES /:article_id END POINT ERRORS */
-        describe("ERROR - GET", () => {
-          describe("NOT FOUND", () => {
-            it("STATUS:404, article does not exist", () => {
+          it("STATUS: 404, query valid but topic does not exist, returns error message", () => {
+            return request(app)
+              .get("/api/articles?topic=NOT-VALID-TOPIC")
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("404 Not Found - Topic does not exist");
+              });
+          });
+
+          it("STATUS: 404, query valid author does not exist but topic does", () => {
+            return request(app)
+              .get("/api/articles?author=DOES-NOT-EIXST&topic=mitch")
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("404 Not Found - User does not exist");
+              });
+          });
+
+          it("STATUS: 404, query valid topic does not exist but author does", () => {
+            return request(app)
+              .get("/api/articles?author=lurker&topic=NOT-A-TOPIC")
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("404 Not Found - Topic does not exist");
+              });
+          });
+
+          it("STATUS: 404, query valid topic and author does not exist", () => {
+            return request(app)
+              .get("/api/articles?author=NOT-A-USER&topic=NOT-A-TOPIC")
+              .expect(404);
+          });
+
+          describe("BAD REQUEST", () => {
+            it("STATUS: 400, bad request, order invalid", () => {
               return request(app)
-                .get("/api/articles/1000")
-                .expect(404)
+                .get("/api/articles?order=NOT-VALID")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("400 Bad Request");
+                });
+            });
+            it("STATUS: 400, bad request invalid sort_by", () => {
+              return request(app)
+                .get("/api/articles?sort_by=NOT-A-VALID-COLUMN")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("400 Bad Request");
+                });
+            });
+          });
+        });
+      });
+
+      /* ENDPOINT /api/articles/article:id */
+      describe("/:article_id", () => {
+        describe("GET", () => {
+          it("status: 200, responds with array of article objects", () => {
+            return request(app)
+              .get("/api/articles/1")
+              .expect(200)
+              .then(({ body: { article } }) => {
+                expect(article).to.have.all.keys([
+                  "author",
+                  "title",
+                  "article_id",
+                  "body",
+                  "topic",
+                  "created_at",
+                  "votes",
+                  "comment_count"
+                ]);
+                expect(article.article_id).to.equal(1);
+              });
+          });
+          describe("PATCH", () => {
+            it("status: 200, takes object for vote change, respond with the updated article", () => {
+              return request(app)
+                .patch("/api/articles/1")
+                .send({ inc_votes: 100 })
+                .expect(200)
+                .then(({ body: { article } }) => {
+                  expect(article.votes).to.equal(200);
+                });
+            });
+            it("status: 200, sending an empty body returns the article unaffected", () => {
+              return request(app)
+                .patch("/api/articles/1")
+                .send({})
+                .expect(200)
+                .then(({ body: { article } }) => {
+                  expect(article.votes).to.equal(100);
+                });
+            });
+          });
+          describe("DELETE", () => {
+            it("status: 204, delete article returns nothing", () => {
+              return request(app)
+                .delete("/api/articles/1")
+                .expect(204)
+                .then(() => {
+                  return request(app)
+                    .get("/api/articles/1/comments")
+                    .expect(404);
+                })
                 .then(({ body: { msg } }) => {
                   expect(msg).to.equal(
                     "404 Not Found - Article does not exist"
@@ -661,379 +674,397 @@ describe("/api", () => {
             });
           });
 
-          describe("BAD REQUEST", () => {
-            it("STATUS:400, invalid id ", () => {
-              return request(app)
-                .get("/api/articles/NOT-VALID-ID")
-                .expect(400)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal("400 Bad Request");
-                });
-            });
-          });
-        });
-        describe("ERROR - PATCH", () => {
-          describe("BAD REQUEST", () => {
-            it("STATUS: 400, responds with error message", () => {
-              // trying to post wrong data type
-              return request(app)
-                .patch("/api/articles/1")
-                .send({ inc_votes: "wrong data type" })
-                .expect(400)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal("400 Bad Request");
-                });
-            });
+          /* ARTICLES /:article_id END POINT ERRORS */
+          describe("ERROR - GET", () => {
             describe("NOT FOUND", () => {
-              it("STATUS 404: NOT FOUND, correct format, non existant article_id", () => {
+              it("STATUS:404, article does not exist", () => {
                 return request(app)
-                  .patch("/api/articles/99999")
-                  .send({ inc_votes: 1 })
+                  .get("/api/articles/1000")
                   .expect(404)
                   .then(({ body: { msg } }) => {
-                    expect(msg).to.equal("404 Not Found - Item does not exist");
+                    expect(msg).to.equal(
+                      "404 Not Found - Article does not exist"
+                    );
                   });
               });
             });
-            describe("DELETE", () => {
+
+            describe("BAD REQUEST", () => {
+              it("STATUS:400, invalid id ", () => {
+                return request(app)
+                  .get("/api/articles/NOT-VALID-ID")
+                  .expect(400)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal("400 Bad Request");
+                  });
+              });
+            });
+          });
+          describe("ERROR - PATCH", () => {
+            describe("BAD REQUEST", () => {
+              it("STATUS: 400, responds with error message", () => {
+                // trying to post wrong data type
+                return request(app)
+                  .patch("/api/articles/1")
+                  .send({ inc_votes: "wrong data type" })
+                  .expect(400)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal("400 Bad Request");
+                  });
+              });
               describe("NOT FOUND", () => {
-                it("STATUS:404, article_id not yet exist", () => {
+                it("STATUS 404: NOT FOUND, correct format, non existant article_id", () => {
                   return request(app)
-                    .delete("/api/articles/1000")
+                    .patch("/api/articles/99999")
+                    .send({ inc_votes: 1 })
                     .expect(404)
                     .then(({ body: { msg } }) => {
                       expect(msg).to.equal(
-                        "404 Not Found - Article does not exist"
+                        "404 Not Found - Item does not exist"
                       );
                     });
                 });
               });
-              describe("BAD REQUEST", () => {
-                it("STATUS:400, invalid article_id", () => {
-                  return request(app)
-                    .delete("/api/articles/NOT-VALID-ID")
-                    .expect(400)
-                    .then(({ body: { msg } }) => {
-                      expect(msg).to.equal("400 Bad Request");
-                    });
+              describe("DELETE", () => {
+                describe("NOT FOUND", () => {
+                  it("STATUS:404, article_id not yet exist", () => {
+                    return request(app)
+                      .delete("/api/articles/1000")
+                      .expect(404)
+                      .then(({ body: { msg } }) => {
+                        expect(msg).to.equal(
+                          "404 Not Found - Article does not exist"
+                        );
+                      });
+                  });
+                });
+                describe("BAD REQUEST", () => {
+                  it("STATUS:400, invalid article_id", () => {
+                    return request(app)
+                      .delete("/api/articles/NOT-VALID-ID")
+                      .expect(400)
+                      .then(({ body: { msg } }) => {
+                        expect(msg).to.equal("400 Bad Request");
+                      });
+                  });
                 });
               });
             });
           });
+          /* Invalid methods already covered */
         });
-        /* Invalid methods already covered */
-      });
-      /* ENDPOINT /api/articles/:article_id/comments */
-      describe("/comments", () => {
-        describe("POST", () => {
-          it("Status: 201, responds with newly posted comment", () => {
-            return request(app)
-              .post("/api/articles/1/comments")
-              .send({ username: "icellusedkars", body: "Test message" })
-              .expect(201)
-              .then(({ body: { comment } }) => {
-                expect(comment).to.have.all.keys([
-                  "article_id",
-                  "author",
-                  "body",
-                  "comment_id",
-                  "created_at",
-                  "votes"
-                ]);
-                expect(comment.article_id).to.equal(1);
-              });
-          });
-        });
-        describe("GET", () => {
-          it("Status: 200, responds with array of comments for given article_id", () => {
-            return request(app)
-              .get("/api/articles/1/comments")
-              .expect(200)
-              .then(({ body: { comments } }) => {
-                expect(comments[1]).to.have.all.keys([
-                  "comment_id",
-                  "author",
-                  "votes",
-                  "created_at",
-                  "body"
-                ]);
-              });
-          });
-          it("status: 200, responds with empty array if article exists but has no comments", () => {
-            return request(app)
-              .get("/api/articles/2/comments")
-              .expect(200)
-              .then(({ body: { comments } }) => {
-                expect(comments).to.eql([]);
-              });
-          });
-
-          it("accepts query sort_by comment_id, and order, asc, desc", () => {
-            const orders = ["asc", "desc"];
-
-            const orderPromises = orders.map(order => {
-              return request(app)
-                .get(
-                  `/api/articles/1/comments?sort_by=comment_id&order=${order}`
-                )
-                .expect(200)
-                .then(({ body: { comments } }) => {
-                  if (order === "desc") {
-                    expect(comments).to.be.sortedBy("comment_id", {
-                      descending: true
-                    });
-                  } else {
-                    expect(comments).to.be.sortedBy("comment_id");
-                  }
-                });
-            });
-            return Promise.all(orderPromises);
-          });
-          it("accepts query sorted_by author and order", () => {
-            const orders = ["asc", "desc"];
-
-            const orderPromises = orders.map(order => {
-              return request(app)
-                .get(`/api/articles/1/comments?sort_by=author&order=${order}`)
-                .expect(200)
-                .then(({ body: { comments } }) => {
-                  if (order === "desc") {
-                    expect(comments).to.be.sortedBy("author", {
-                      descending: true
-                    });
-                  } else {
-                    expect(comments).to.be.sortedBy("author");
-                  }
-                });
-            });
-            return Promise.all(orderPromises);
-          });
-          it("accepts query sort_by votes, and order", () => {
-            const orders = ["asc", "desc"];
-
-            const orderPromises = orders.map(order => {
-              return request(app)
-                .get(`/api/articles/1/comments?sort_by=votes&order=${order}`)
-                .expect(200)
-                .then(({ body: { comments } }) => {
-                  if (order === "desc") {
-                    expect(comments).to.be.sortedBy("votes", {
-                      descending: true
-                    });
-                  } else {
-                    expect(comments).to.be.sortedBy("votes");
-                  }
-                });
-            });
-            return Promise.all(orderPromises);
-          });
-          it("accepts query sorted by created_at and order", () => {
-            const orders = ["asc", "desc"];
-
-            const orderPromises = orders.map(order => {
-              return request(app)
-                .get(
-                  `/api/articles/1/comments?sort_by=created_at&order=${order}`
-                )
-                .expect(200)
-                .then(({ body: { comments } }) => {
-                  if (order === "desc") {
-                    expect(comments).to.be.sortedBy("created_at", {
-                      descending: true
-                    });
-                  } else {
-                    expect(comments).to.be.sortedBy("created_at");
-                  }
-                });
-            });
-            return Promise.all(orderPromises);
-          });
-          it("ordering defaults to created_at, descending if no queries are provided", () => {
-            return request(app)
-              .get(`/api/articles/1/comments`)
-              .expect(200)
-              .then(({ body: { comments } }) => {
-                expect(comments).to.be.sortedBy("created_at", {
-                  descending: true
-                });
-              });
-          });
-        });
-        /* ERRORS api/articles/:article_id/comments*/
-        describe("ERRORS - POST", () => {
-          describe("UNPROCESSABLE ENTITY", () => {
-            it("STATUS: 422 - username does not exist, responds with error message", () => {
+        /* ENDPOINT /api/articles/:article_id/comments */
+        describe("/comments", () => {
+          describe("POST", () => {
+            it("Status: 201, responds with newly posted comment", () => {
               return request(app)
                 .post("/api/articles/1/comments")
-                .send({
-                  username: "not-a-user",
-                  body: "test message"
-                })
-                .expect(422)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal("422 Unprocessable Entity");
+                .send({ username: "icellusedkars", body: "Test message" })
+                .expect(201)
+                .then(({ body: { comment } }) => {
+                  expect(comment).to.have.all.keys([
+                    "article_id",
+                    "author",
+                    "body",
+                    "comment_id",
+                    "created_at",
+                    "votes"
+                  ]);
+                  expect(comment.article_id).to.equal(1);
                 });
             });
           });
-          describe("BAD REQUEST", () => {
-            it("STATUS: 400 - Passing an empty object with no username or body", () => {
+          describe("GET", () => {
+            it("Status: 200, responds with array of comments for given article_id", () => {
               return request(app)
-                .post("/api/articles/1/comments")
-                .send({})
-                .expect(400)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal("400 Bad Request");
+                .get("/api/articles/1/comments")
+                .expect(200)
+                .then(({ body: { comments } }) => {
+                  expect(comments[1]).to.have.all.keys([
+                    "comment_id",
+                    "author",
+                    "votes",
+                    "created_at",
+                    "body"
+                  ]);
                 });
             });
-          });
-          describe("BAD REQUEST", () => {
-            it("STATUS: 400 - article id does not exist", () => {
+            it("status: 200, responds with empty array if article exists but has no comments", () => {
               return request(app)
-                .post("/api/articles/not-an-id/comments")
-                .send({
-                  username: "icellusedkars",
-                  body: "test message"
-                })
-                .expect(400)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal("400 Bad Request");
+                .get("/api/articles/2/comments")
+                .expect(200)
+                .then(({ body: { comments } }) => {
+                  expect(comments).to.eql([]);
                 });
             });
-          });
-        });
-        describe("GET", () => {
-          describe("NOT FOUND", () => {
-            it("STATUS: 404, valid param but article currently does not exist", () => {
-              return request(app)
-                .get("/api/articles/1000/comments")
-                .expect(404)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal(
-                    "404 Not Found - Article does not exist"
-                  );
-                });
-            });
-          });
-          describe("BAD REQUEST", () => {
-            it("400 - query not valid", () => {
-              return request(app)
-                .get("/api/articles/1/comments?sort_by=NOT-VALID")
-                .expect(400)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal("400 Bad Request");
-                });
-            });
-            it("400 - Not valid article_id", () => {
-              return request(app)
-                .get("/api/articles/NOT-VALID-ID/comments")
-                .expect(400)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal("400 Bad Request");
-                });
-            });
-          });
-        });
-      });
-    });
-  });
 
-  /* COMMENTS ENDPOINT */
-  describe("/comments", () => {
-    describe("/:comment_id", () => {
-      describe("PATCH", () => {
-        it("Status:200 increase comment_id votes", () => {
-          return request(app)
-            .patch("/api/comments/1")
-            .send({ inc_votes: 50 })
-            .expect(200)
-            .then(({ body: { comment } }) => {
-              expect(comment.votes).to.equal(66);
-              expect(comment.comment_id).to.equal(1);
-            });
-        });
-        it("Status:200 decrease comment_id votes", () => {
-          return request(app)
-            .patch("/api/comments/1")
-            .send({ inc_votes: -10 })
-            .expect(200)
-            .then(({ body: { comment } }) => {
-              expect(comment.votes).to.equal(6);
-              expect(comment.comment_id).to.equal(1);
-            });
-        });
-        it("Status:200 accepts empty body and responds with comment unaffected", () => {
-          return request(app)
-            .patch("/api/comments/1")
-            .send({})
-            .expect(200)
-            .then(({ body: { comment } }) => {
-              expect(comment.votes).to.equal(16);
-              expect(comment.comment_id).to.equal(1);
-            });
-        });
-      });
-    });
-    describe("DELTE", () => {
-      it("Status 204", () => {
-        return request(app)
-          .delete("/api/comments/1")
-          .expect(204);
-      });
-    });
-    /* ERRORS /api/comments/:comment_id */
-    describe("ERRORS", () => {
-      describe("PATCH", () => {
-        describe("BAD REQUEST", () => {
-          it("STATUS 400, posting to invalid comment_id", () => {
-            return request(app)
-              .patch("/api/comments/NOT-VALID")
-              .send({ inc_votes: 10 })
-              .expect(400)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal("400 Bad Request");
+            it("accepts query sort_by comment_id, and order, asc, desc", () => {
+              const orders = ["asc", "desc"];
+
+              const orderPromises = orders.map(order => {
+                return request(app)
+                  .get(
+                    `/api/articles/1/comments?sort_by=comment_id&order=${order}`
+                  )
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    if (order === "desc") {
+                      expect(comments).to.be.sortedBy("comment_id", {
+                        descending: true
+                      });
+                    } else {
+                      expect(comments).to.be.sortedBy("comment_id");
+                    }
+                  });
               });
+              return Promise.all(orderPromises);
+            });
+            it("accepts query sorted_by author and order", () => {
+              const orders = ["asc", "desc"];
+
+              const orderPromises = orders.map(order => {
+                return request(app)
+                  .get(`/api/articles/1/comments?sort_by=author&order=${order}`)
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    if (order === "desc") {
+                      expect(comments).to.be.sortedBy("author", {
+                        descending: true
+                      });
+                    } else {
+                      expect(comments).to.be.sortedBy("author");
+                    }
+                  });
+              });
+              return Promise.all(orderPromises);
+            });
+            it("accepts query sort_by votes, and order", () => {
+              const orders = ["asc", "desc"];
+
+              const orderPromises = orders.map(order => {
+                return request(app)
+                  .get(`/api/articles/1/comments?sort_by=votes&order=${order}`)
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    if (order === "desc") {
+                      expect(comments).to.be.sortedBy("votes", {
+                        descending: true
+                      });
+                    } else {
+                      expect(comments).to.be.sortedBy("votes");
+                    }
+                  });
+              });
+              return Promise.all(orderPromises);
+            });
+            it("accepts query sorted by created_at and order", () => {
+              const orders = ["asc", "desc"];
+
+              const orderPromises = orders.map(order => {
+                return request(app)
+                  .get(
+                    `/api/articles/1/comments?sort_by=created_at&order=${order}`
+                  )
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    if (order === "desc") {
+                      expect(comments).to.be.sortedBy("created_at", {
+                        descending: true
+                      });
+                    } else {
+                      expect(comments).to.be.sortedBy("created_at");
+                    }
+                  });
+              });
+              return Promise.all(orderPromises);
+            });
+            it("ordering defaults to created_at, descending if no queries are provided", () => {
+              return request(app)
+                .get(`/api/articles/1/comments`)
+                .expect(200)
+                .then(({ body: { comments } }) => {
+                  expect(comments).to.be.sortedBy("created_at", {
+                    descending: true
+                  });
+                });
+            });
           });
-          it("STATUS: 400, posting incorrect data type", () => {
+          /* ERRORS api/articles/:article_id/comments*/
+          describe("ERRORS - POST", () => {
+            describe("UNPROCESSABLE ENTITY", () => {
+              it("STATUS: 422 - username does not exist, responds with error message", () => {
+                return request(app)
+                  .post("/api/articles/1/comments")
+                  .send({
+                    username: "not-a-user",
+                    body: "test message"
+                  })
+                  .expect(422)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal("422 Unprocessable Entity");
+                  });
+              });
+            });
+            describe("BAD REQUEST", () => {
+              it("STATUS: 400 - Passing an empty object with no username or body", () => {
+                return request(app)
+                  .post("/api/articles/1/comments")
+                  .send({})
+                  .expect(400)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal("400 Bad Request");
+                  });
+              });
+            });
+            describe("BAD REQUEST", () => {
+              it("STATUS: 400 - article id does not exist", () => {
+                return request(app)
+                  .post("/api/articles/not-an-id/comments")
+                  .send({
+                    username: "icellusedkars",
+                    body: "test message"
+                  })
+                  .expect(400)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal("400 Bad Request");
+                  });
+              });
+            });
+          });
+          describe("GET", () => {
+            describe("NOT FOUND", () => {
+              it("STATUS: 404, valid param but article currently does not exist", () => {
+                return request(app)
+                  .get("/api/articles/1000/comments")
+                  .expect(404)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal(
+                      "404 Not Found - Article does not exist"
+                    );
+                  });
+              });
+            });
+            describe("BAD REQUEST", () => {
+              it("400 - query not valid", () => {
+                return request(app)
+                  .get("/api/articles/1/comments?sort_by=NOT-VALID")
+                  .expect(400)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal("400 Bad Request");
+                  });
+              });
+              it("400 - Not valid article_id", () => {
+                return request(app)
+                  .get("/api/articles/NOT-VALID-ID/comments")
+                  .expect(400)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal("400 Bad Request");
+                  });
+              });
+            });
+          });
+        });
+      });
+    });
+
+    /* COMMENTS ENDPOINT */
+    describe("/comments", () => {
+      describe("/:comment_id", () => {
+        describe("PATCH", () => {
+          it("Status:200 increase comment_id votes", () => {
             return request(app)
               .patch("/api/comments/1")
-              .send({ inc_votes: "invalid-votes" })
-              .expect(400)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal("400 Bad Request");
+              .send({ inc_votes: 50 })
+              .expect(200)
+              .then(({ body: { comment } }) => {
+                expect(comment.votes).to.equal(66);
+                expect(comment.comment_id).to.equal(1);
+              });
+          });
+          it("Status:200 decrease comment_id votes", () => {
+            return request(app)
+              .patch("/api/comments/1")
+              .send({ inc_votes: -10 })
+              .expect(200)
+              .then(({ body: { comment } }) => {
+                expect(comment.votes).to.equal(6);
+                expect(comment.comment_id).to.equal(1);
+              });
+          });
+          it("Status:200 accepts empty body and responds with comment unaffected", () => {
+            return request(app)
+              .patch("/api/comments/1")
+              .send({})
+              .expect(200)
+              .then(({ body: { comment } }) => {
+                expect(comment.votes).to.equal(16);
+                expect(comment.comment_id).to.equal(1);
               });
           });
         });
+      });
+      describe("DELTE", () => {
+        it("Status 204", () => {
+          return request(app)
+            .delete("/api/comments/1")
+            .expect(204);
+        });
+      });
+      /* ERRORS /api/comments/:comment_id */
+      describe("ERRORS", () => {
+        describe("PATCH", () => {
+          describe("BAD REQUEST", () => {
+            it("STATUS 400, posting to invalid comment_id", () => {
+              return request(app)
+                .patch("/api/comments/NOT-VALID")
+                .send({ inc_votes: 10 })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("400 Bad Request");
+                });
+            });
+            it("STATUS: 400, posting incorrect data type", () => {
+              return request(app)
+                .patch("/api/comments/1")
+                .send({ inc_votes: "invalid-votes" })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("400 Bad Request");
+                });
+            });
+          });
+          describe("NOT FOUND", () => {
+            it("STATUS 404, posting to non - existant comment_id", () => {
+              return request(app)
+                .patch("/api/comments/100")
+                .send({ inc_votes: 10 })
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("404 Not Found - Item does not exist");
+                });
+            });
+          });
+        });
+      });
+      describe("DELETE", () => {
         describe("NOT FOUND", () => {
-          it("STATUS 404, posting to non - existant comment_id", () => {
+          it("STATUS 404, deleting from non-existant comment_id returns error msg", () => {
             return request(app)
-              .patch("/api/comments/100")
-              .send({ inc_votes: 10 })
+              .delete("/api/comments/1000")
               .expect(404)
               .then(({ body: { msg } }) => {
                 expect(msg).to.equal("404 Not Found - Item does not exist");
               });
           });
-        });
-      });
-    });
-    describe("DELETE", () => {
-      describe("NOT FOUND", () => {
-        it("STATUS 404, deleting from non-existant comment_id returns error msg", () => {
-          return request(app)
-            .delete("/api/comments/1000")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal("404 Not Found - Item does not exist");
+          describe("BAD REQUEST", () => {
+            it("STATUS: 400, comment_id, invalid, returns error message", () => {
+              return request(app)
+                .delete("/api/comments/NOT-VALID-COMMENT-ID")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("400 Bad Request");
+                });
             });
-        });
-        describe("BAD REQUEST", () => {
-          it("STATUS: 400, comment_id, invalid, returns error message", () => {
-            return request(app)
-              .delete("/api/comments/NOT-VALID-COMMENT-ID")
-              .expect(400)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal("400 Bad Request");
-              });
           });
         });
       });

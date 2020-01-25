@@ -140,3 +140,45 @@ exports.removeArticleById = article_id => {
     .where({ article_id })
     .del();
 };
+
+exports.insertArticle = newArticleData => {
+  const formattedInput = {
+    ...newArticleData,
+    author: newArticleData.username
+  };
+  delete formattedInput.username;
+
+  return connection
+    .from("articles")
+    .insert(formattedInput)
+    .returning("*")
+    .then(insertedArticle => {
+      const { article_id } = insertedArticle[0];
+      return connection
+        .select(
+          "articles.author",
+          "title",
+          "articles.article_id",
+          "topic",
+          "articles.created_at",
+          "articles.votes",
+          "articles.body"
+        )
+        .from("articles")
+        .count({ comment_count: "comment_id" })
+        .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
+        .groupBy("articles.article_id")
+        .modify(query => {
+          query.where("articles.article_id", article_id);
+        });
+    })
+    .then(insertedArticle => {
+      // convert comment count to integer
+      const formattedArticle = {
+        ...insertedArticle[0],
+        comment_count: Number(insertedArticle[0].comment_count)
+      };
+
+      return formattedArticle;
+    });
+};

@@ -11,7 +11,8 @@ const {
   postCommentByArticleId,
   getAllCommentsByArticleId,
   getAllArticles,
-  deleteArticleById
+  deleteArticleById,
+  postArticle
 } = require("../controllers/articlesController.js");
 
 articlesRouter
@@ -30,6 +31,7 @@ articlesRouter
 articlesRouter
   .route("/")
   .get(getAllArticles)
+  .post(postArticle)
   .all(handleInvalidMethod405);
 
 module.exports = articlesRouter;
