@@ -73,7 +73,6 @@ exports.insertCommentByArticleId = (article_id, comment) => {
 };
 
 exports.fetchAllCommentsByArticleId = (
-  // to refactor out map and just use select
   article_id,
   { sort_by = "created_at", order = "desc" }
 ) => {
@@ -128,4 +127,15 @@ exports.fetchAllArticles = ({
   } else {
     return Promise.reject(custom400);
   }
+};
+
+exports.checkArticleExists = article_id => {
+  return connection
+    .from("articles")
+    .where({ article_id })
+    .then(article => {
+      if (article.length === 0) {
+        return Promise.reject(custom404Article);
+      }
+    });
 };

@@ -4,7 +4,8 @@ const {
   updateArticleById,
   insertCommentByArticleId,
   fetchAllCommentsByArticleId,
-  fetchAllArticles
+  fetchAllArticles,
+  checkArticleExists
 } = require("../models/articlesModels.js");
 
 //users model
@@ -46,10 +47,16 @@ exports.postCommentByArticleId = (req, res, next) => {
 };
 
 exports.getAllCommentsByArticleId = (req, res, next) => {
+  // check article exists first
   const { article_id } = req.params;
   const query = req.query;
-  fetchAllCommentsByArticleId(article_id, query)
-    .then(comments => {
+  const arrayOfPromises = [
+    checkArticleExists(article_id),
+    fetchAllCommentsByArticleId(article_id, query)
+  ];
+
+  Promise.all(arrayOfPromises)
+    .then(([aritcle, comments]) => {
       res.status(200).send({ comments });
     })
     .catch(next);

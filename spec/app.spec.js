@@ -792,6 +792,20 @@ describe("/api", () => {
             });
           });
         });
+        describe("GET", () => {
+          describe("NOT FOUND", () => {
+            it("STATUS: 404, valid param but article currently does not exist", () => {
+              return request(app)
+                .get("/api/articles/1000/comments")
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal(
+                    "404 Not Found - Article does not exist"
+                  );
+                });
+            });
+          });
+        });
       });
     });
   });
