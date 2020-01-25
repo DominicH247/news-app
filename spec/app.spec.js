@@ -643,7 +643,7 @@ describe("/api", () => {
               .then(({ body: { msg } }) => {
                 expect(msg).to.equal("404 Not Found - Article does not exist");
               });
-          }); //TO ADD ERROR HANDLERS
+          });
         });
 
         /* ARTICLES /:article_id END POINT ERRORS */
@@ -693,6 +693,30 @@ describe("/api", () => {
                   .then(({ body: { msg } }) => {
                     expect(msg).to.equal("404 Not Found - Item does not exist");
                   });
+              });
+            });
+            describe("DELETE", () => {
+              describe("NOT FOUND", () => {
+                it("STATUS:404, article_id not yet exist", () => {
+                  return request(app)
+                    .delete("/api/articles/1000")
+                    .expect(404)
+                    .then(({ body: { msg } }) => {
+                      expect(msg).to.equal(
+                        "404 Not Found - Article does not exist"
+                      );
+                    });
+                });
+              });
+              describe("BAD REQUEST", () => {
+                it("STATUS:400, invalid article_id", () => {
+                  return request(app)
+                    .delete("/api/articles/NOT-VALID-ID")
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                      expect(msg).to.equal("400 Bad Request");
+                    });
+                });
               });
             });
           });

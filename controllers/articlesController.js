@@ -90,8 +90,18 @@ exports.getAllArticles = (req, res, next) => {
 
 exports.deleteArticleById = (req, res, next) => {
   const { article_id } = req.params;
+  checkArticleExists(article_id)
+    .then(() => {
+      return removeArticleById(article_id);
+    })
+    .then(() => {
+      res.sendStatus(204);
+    })
+    .catch(next);
 
-  removeArticleById(article_id).then(() => {
-    res.sendStatus(204);
-  });
+  // removeArticleById(article_id)
+  //   .then(() => {
+  //     res.sendStatus(204);
+  //   })
+  //   .catch(next);
 };
