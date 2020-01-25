@@ -631,7 +631,7 @@ describe("/api", () => {
           });
         });
         describe("DELETE", () => {
-          it.only("status: 204, delete article returns nothing", () => {
+          it("status: 204, delete article returns nothing", () => {
             return request(app)
               .delete("/api/articles/1")
               .expect(204)
@@ -643,7 +643,7 @@ describe("/api", () => {
               .then(({ body: { msg } }) => {
                 expect(msg).to.equal("404 Not Found - Article does not exist");
               });
-          });
+          }); //TO ADD ERROR HANDLERS
         });
 
         /* ARTICLES /:article_id END POINT ERRORS */
