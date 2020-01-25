@@ -474,10 +474,7 @@ describe("/api", () => {
         it("STATUS: 404, query valid topic and author does not exist", () => {
           return request(app)
             .get("/api/articles?author=NOT-A-USER&topic=NOT-A-TOPIC")
-            .expect(404)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal("404 Not Found - Topic does not exist");
-            });
+            .expect(404);
         });
 
         describe("BAD REQUEST", () => {
