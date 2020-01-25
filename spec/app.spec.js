@@ -540,7 +540,7 @@ describe("/api", () => {
               .send({ inc_votes: 100 })
               .expect(200)
               .then(({ body: { article } }) => {
-                expect(article[0].votes).to.equal(200);
+                expect(article.votes).to.equal(200);
               });
           });
         });

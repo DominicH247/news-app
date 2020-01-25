@@ -50,7 +50,7 @@ exports.updateArticleById = (article_id, inc_votes) => {
           msg: "404 Not Found - Item does not exist"
         });
       }
-      return article;
+      return article[0];
     });
 };
 
