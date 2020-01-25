@@ -148,6 +148,11 @@ exports.insertArticle = newArticleData => {
   };
   delete formattedInput.username;
 
+  // defaults votes to zero on newly posted article
+  if ("votes" in formattedInput) {
+    delete formattedInput.votes;
+  }
+
   return connection
     .from("articles")
     .insert(formattedInput)

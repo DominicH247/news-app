@@ -526,8 +526,6 @@ describe("/api", () => {
       });
       describe("POST", () => {
         it("Status:201, post new article, responds with the new article", () => {
-          // Errors
-          // bad request - no body, user not exist, topic doesnt exist, invalid datatype
           return request(app)
             .post("/api/articles")
             .send({
@@ -550,66 +548,141 @@ describe("/api", () => {
               ]);
             });
         });
+        it("Status:201, defaults votes to zero if added to newly posted article", () => {
+          return request(app)
+            .post("/api/articles")
+            .send({
+              username: "lurker",
+              topic: "mitch",
+              title: "Test title",
+              body: "test",
+              votes: 10
+            })
+            .expect(201)
+            .then(({ body: { article } }) => {
+              expect(article.votes).to.equal(0);
+            });
+        });
         /* ERROR api/articles */
-        describe("NOT FOUND", () => {
-          it("STATUS: 404, query valid but author does not exist, returns error message", () => {
-            return request(app)
-              .get("/api/articles?author=NOT-A-REAL-AUTHOR")
-              .expect(404)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal("404 Not Found - User does not exist");
-              });
-          });
-
-          it("STATUS: 404, query valid but topic does not exist, returns error message", () => {
-            return request(app)
-              .get("/api/articles?topic=NOT-VALID-TOPIC")
-              .expect(404)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal("404 Not Found - Topic does not exist");
-              });
-          });
-
-          it("STATUS: 404, query valid author does not exist but topic does", () => {
-            return request(app)
-              .get("/api/articles?author=DOES-NOT-EIXST&topic=mitch")
-              .expect(404)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal("404 Not Found - User does not exist");
-              });
-          });
-
-          it("STATUS: 404, query valid topic does not exist but author does", () => {
-            return request(app)
-              .get("/api/articles?author=lurker&topic=NOT-A-TOPIC")
-              .expect(404)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal("404 Not Found - Topic does not exist");
-              });
-          });
-
-          it("STATUS: 404, query valid topic and author does not exist", () => {
-            return request(app)
-              .get("/api/articles?author=NOT-A-USER&topic=NOT-A-TOPIC")
-              .expect(404);
-          });
-
-          describe("BAD REQUEST", () => {
-            it("STATUS: 400, bad request, order invalid", () => {
+        describe("GET - ERROR", () => {
+          describe("NOT FOUND", () => {
+            it("STATUS: 404, query valid but author does not exist, returns error message", () => {
               return request(app)
-                .get("/api/articles?order=NOT-VALID")
+                .get("/api/articles?author=NOT-A-REAL-AUTHOR")
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("404 Not Found - User does not exist");
+                });
+            });
+
+            it("STATUS: 404, query valid but topic does not exist, returns error message", () => {
+              return request(app)
+                .get("/api/articles?topic=NOT-VALID-TOPIC")
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("404 Not Found - Topic does not exist");
+                });
+            });
+
+            it("STATUS: 404, query valid author does not exist but topic does", () => {
+              return request(app)
+                .get("/api/articles?author=DOES-NOT-EIXST&topic=mitch")
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("404 Not Found - User does not exist");
+                });
+            });
+
+            it("STATUS: 404, query valid topic does not exist but author does", () => {
+              return request(app)
+                .get("/api/articles?author=lurker&topic=NOT-A-TOPIC")
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("404 Not Found - Topic does not exist");
+                });
+            });
+
+            it("STATUS: 404, query valid topic and author does not exist", () => {
+              return request(app)
+                .get("/api/articles?author=NOT-A-USER&topic=NOT-A-TOPIC")
+                .expect(404);
+            });
+
+            describe("BAD REQUEST", () => {
+              it("STATUS: 400, bad request, order invalid", () => {
+                return request(app)
+                  .get("/api/articles?order=NOT-VALID")
+                  .expect(400)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal("400 Bad Request");
+                  });
+              });
+              it("STATUS: 400, bad request invalid sort_by", () => {
+                return request(app)
+                  .get("/api/articles?sort_by=NOT-A-VALID-COLUMN")
+                  .expect(400)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal("400 Bad Request");
+                  });
+              });
+            });
+          });
+        });
+        describe("POST - ERROR", () => {
+          describe("BAD REQUEST", () => {
+            it("STATUS: 400, missing fields", () => {
+              return request(app)
+                .post("/api/articles")
+                .send({})
                 .expect(400)
                 .then(({ body: { msg } }) => {
                   expect(msg).to.equal("400 Bad Request");
                 });
             });
-            it("STATUS: 400, bad request invalid sort_by", () => {
+            it("STATUS: 400, additional field outside of schema", () => {
               return request(app)
-                .get("/api/articles?sort_by=NOT-A-VALID-COLUMN")
+                .post("/api/articles")
+                .send({
+                  username: "lurker",
+                  topic: "mitch",
+                  title: "Test title",
+                  body: "test",
+                  additionalField: "ADDITIONAL FIELD"
+                })
                 .expect(400)
                 .then(({ body: { msg } }) => {
                   expect(msg).to.equal("400 Bad Request");
                 });
+            });
+            describe("NON-EXISTING ENTITY", () => {
+              it("STATUS: 422, non-existing topic", () => {
+                return request(app)
+                  .post("/api/articles")
+                  .send({
+                    username: "lurker",
+                    topic: "NON-EXISTING-TOPIC",
+                    title: "Test title",
+                    body: "test"
+                  })
+                  .expect(422)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal("422 Unprocessable Entity");
+                  });
+              });
+              it("STATUS: 422, non-existing user", () => {
+                return request(app)
+                  .post("/api/articles")
+                  .send({
+                    username: "NON-EXISTING USER",
+                    topic: "mitch",
+                    title: "Test title",
+                    body: "test"
+                  })
+                  .expect(422)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal("422 Unprocessable Entity");
+                  });
+              });
             });
           });
         });
