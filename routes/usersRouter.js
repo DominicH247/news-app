@@ -7,12 +7,14 @@ const { handleInvalidMethod405 } = require("../errors/index.js");
 // controllers
 const {
   getUserByUsername,
-  getAllUsers
+  getAllUsers,
+  postUser
 } = require("../controllers/usersControllers.js");
 
 usersRouter
   .route("/")
   .get(getAllUsers)
+  .post(postUser)
   .all(handleInvalidMethod405);
 
 usersRouter

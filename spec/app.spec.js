@@ -233,6 +233,25 @@ describe("/api", () => {
           });
       });
     });
+    describe("POST", () => {
+      it("Status 201: create new user, responds with created user", () => {
+        return request(app)
+          .post("/api/users")
+          .send({
+            username: "testuser1",
+            avatar_url: "www.avatar.com",
+            name: "test user"
+          })
+          .expect(201)
+          .then(({ body: { user } }) => {
+            expect(user).to.eql({
+              username: "testuser1",
+              avatar_url: "www.avatar.com",
+              name: "test user"
+            });
+          });
+      });
+    });
     describe("/users/:username", () => {
       describe("GET", () => {
         it("STATUS: 200, responds with a user object for the given username", () => {
@@ -266,6 +285,34 @@ describe("/api", () => {
         });
         /* Invalid Methods on users endpoint already covered via 
         testing in the topics end point */
+        describe("POST", () => {
+          describe.only("BAD REQUEST", () => {
+            it("STATUS:400, missing fields", () => {
+              return request(app)
+                .post("/api/users")
+                .send({})
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("400 Bad Request");
+                });
+            });
+            it("STATUS:400, username already exists", () => {
+              return request(app)
+                .post("/api/users")
+                .send({
+                  username: "lurker",
+                  avatar_url: "www.avatar.com",
+                  name: "test user"
+                })
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal(
+                    "400 Bad Request - username already exists"
+                  );
+                });
+            });
+          });
+        });
       });
     });
   });

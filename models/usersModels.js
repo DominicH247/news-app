@@ -29,3 +29,13 @@ exports.checkUsernameExists = ({ author }) => {
       return user;
     });
 };
+
+exports.insertUser = newUserData => {
+  return connection
+    .from("users")
+    .insert(newUserData)
+    .returning("*")
+    .then(insertedUser => {
+      return insertedUser[0];
+    });
+};

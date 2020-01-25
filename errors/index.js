@@ -16,9 +16,16 @@ exports.handleUnprocessable422 = (err, req, res, next) => {
 };
 
 exports.handleBadRequest400 = (err, req, res, next) => {
-  const badRequestCodes = ["22P02", "23502", "42703"];
+  const badRequestCodes = ["22P02", "23502", "42703", "23505"];
+
   if (badRequestCodes.includes(err.code)) {
-    res.status(400).send({ msg: "400 Bad Request" });
+    if (err.code === "23505") {
+      res
+        .status(400)
+        .send({ msg: "400 Bad Request - username already exists" });
+    } else {
+      res.status(400).send({ msg: "400 Bad Request" });
+    }
   } else {
     next(err);
   }
