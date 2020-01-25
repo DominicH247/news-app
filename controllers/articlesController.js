@@ -47,7 +47,7 @@ exports.postCommentByArticleId = (req, res, next) => {
 };
 
 exports.getAllCommentsByArticleId = (req, res, next) => {
-  // check article exists first
+  // check article exists
   const { article_id } = req.params;
   const query = req.query;
   const arrayOfPromises = [

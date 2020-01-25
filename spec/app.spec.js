@@ -782,14 +782,6 @@ describe("/api", () => {
                   expect(msg).to.equal("400 Bad Request");
                 });
             });
-            it("400 - query not valid", () => {
-              return request(app)
-                .get("/api/articles/1/comments?sort_by=NOT-VALID")
-                .expect(400)
-                .then(({ body: { msg } }) => {
-                  expect(msg).to.equal("400 Bad Request");
-                });
-            });
           });
         });
         describe("GET", () => {
@@ -802,6 +794,24 @@ describe("/api", () => {
                   expect(msg).to.equal(
                     "404 Not Found - Article does not exist"
                   );
+                });
+            });
+          });
+          describe("BAD REQUEST", () => {
+            it("400 - query not valid", () => {
+              return request(app)
+                .get("/api/articles/1/comments?sort_by=NOT-VALID")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("400 Bad Request");
+                });
+            });
+            it("400 - Not valid article_id", () => {
+              return request(app)
+                .get("/api/articles/NOT-VALID-ID/comments")
+                .expect(400)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("400 Bad Request");
                 });
             });
           });
