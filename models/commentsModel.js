@@ -14,7 +14,7 @@ exports.updateCommentById = (comment_id, inc_votes = 0) => {
     .returning("*")
     .then(comment => {
       if (comment.length === 0) {
-        return Promise.reject(custom400);
+        return Promise.reject(custom404);
       }
       return comment[0];
     });

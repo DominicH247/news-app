@@ -867,9 +867,9 @@ describe("/api", () => {
     describe("ERRORS", () => {
       describe("PATCH", () => {
         describe("BAD REQUEST", () => {
-          it("STATUS 400, posting to non-existant comment_id", () => {
+          it("STATUS 400, posting to invalid comment_id", () => {
             return request(app)
-              .patch("/api/comments/100")
+              .patch("/api/comments/NOT-VALID")
               .send({ inc_votes: 10 })
               .expect(400)
               .then(({ body: { msg } }) => {
@@ -883,6 +883,17 @@ describe("/api", () => {
               .expect(400)
               .then(({ body: { msg } }) => {
                 expect(msg).to.equal("400 Bad Request");
+              });
+          });
+        });
+        describe("NOT FOUND", () => {
+          it("STATUS 404, posting to non - existant comment_id", () => {
+            return request(app)
+              .patch("/api/comments/100")
+              .send({ inc_votes: 10 })
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("404 Not Found - Item does not exist");
               });
           });
         });
