@@ -1,6 +1,6 @@
 const connection = require("../db/connection.js");
 
-const { custom404, custom400 } = require("../errors/customErrors.js");
+const { custom404Article, custom400 } = require("../errors/customErrors.js");
 
 exports.fetchArticleById = article_id => {
   // commments
@@ -24,7 +24,7 @@ exports.fetchArticleById = article_id => {
     ([articles, comments]) => {
       //if articles or comments array is 0 reject with custom 404
       if (articles.length === 0) {
-        return articles;
+        return Promise.reject(custom404Article);
       }
 
       // format article

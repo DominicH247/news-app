@@ -9,7 +9,6 @@ const {
   handleCustom,
   handleBadRequest400,
   handleInvalidPath404,
-  // handlePsql404,
   handleServerError500,
   handleUnprocessable422
 } = require("./errors/index.js");
@@ -22,7 +21,6 @@ app.use("/api", apiRouter);
 
 // error handlers
 app.use(handleCustom);
-// app.use(handlePsql404);
 app.use(handleUnprocessable422);
 app.use(handleBadRequest400);
 

@@ -13,6 +13,11 @@ exports.custom404Topic = {
   msg: "404 Not Found - Topic does not exist"
 };
 
+exports.custom404Article = {
+  status: 404,
+  msg: "404 Not Found - Article does not exist"
+};
+
 exports.custom400 = {
   status: 400,
   msg: "400 Bad Request"

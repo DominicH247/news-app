@@ -516,6 +516,7 @@ describe("/api", () => {
                 "author",
                 "title",
                 "article_id",
+                "body",
                 "topic",
                 "created_at",
                 "votes",
@@ -524,14 +525,14 @@ describe("/api", () => {
               expect(article.article_id).to.equal(1);
             });
         });
-        it("status: 200, responds with empty array if article_id does not exist", () => {
-          return request(app)
-            .get("/api/articles/1000")
-            .expect(200)
-            .then(({ body: { article } }) => {
-              expect(article).to.eql([]);
-            });
-        });
+        // it("status: 200, responds with empty array if article_id does not exist", () => {
+        //   return request(app)
+        //     .get("/api/articles/1000")
+        //     .expect(200)
+        //     .then(({ body: { article } }) => {
+        //       expect(article).to.eql([]);
+        //     });
+        // });
         describe("PATCH", () => {
           it("status: 200, takes object for vote change, respond with the updated article", () => {
             return request(app)
@@ -545,6 +546,19 @@ describe("/api", () => {
         });
         /* ARTICLES /:article_id END POINT ERRORS */
         describe("ERROR - GET", () => {
+          describe("NOT FOUND", () => {
+            it("STATUS:404, article does not exist", () => {
+              return request(app)
+                .get("/api/articles/1000")
+                .expect(404)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal(
+                    "404 Not Found - Article does not exist"
+                  );
+                });
+            });
+          });
+
           describe("BAD REQUEST", () => {
             it("STATUS:400, invalid id ", () => {
               return request(app)
