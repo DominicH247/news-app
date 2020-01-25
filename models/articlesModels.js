@@ -36,7 +36,7 @@ exports.fetchArticleById = article_id => {
   );
 };
 
-exports.updateArticleById = (article_id, inc_votes) => {
+exports.updateArticleById = (article_id, inc_votes = 0) => {
   // update article votes
   return connection
     .from("articles")

@@ -543,6 +543,15 @@ describe("/api", () => {
                 expect(article.votes).to.equal(200);
               });
           });
+          it.only("status: 200, sending an empty body returns the article unaffected", () => {
+            return request(app)
+              .patch("/api/articles/1")
+              .send({})
+              .expect(200)
+              .then(({ body: { article } }) => {
+                expect(article.votes).to.equal(100);
+              });
+          });
         });
         /* ARTICLES /:article_id END POINT ERRORS */
         describe("ERROR - GET", () => {
