@@ -14,6 +14,7 @@ exports.fetchArticleById = article_id => {
   // articles
   const articlePromise = connection
     .from("articles")
+
     .where({ article_id })
     .then(article => {
       return article;
@@ -29,7 +30,6 @@ exports.fetchArticleById = article_id => {
       // format article
       const comment_count = comments.length;
       const articleFormatted = { ...articles[0], comment_count };
-      delete articleFormatted.body;
 
       return articleFormatted;
     }
