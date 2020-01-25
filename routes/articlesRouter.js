@@ -10,13 +10,15 @@ const {
   patchArticleById,
   postCommentByArticleId,
   getAllCommentsByArticleId,
-  getAllArticles
+  getAllArticles,
+  deleteArticleById
 } = require("../controllers/articlesController.js");
 
 articlesRouter
   .route("/:article_id")
   .get(getArticleById)
   .patch(patchArticleById)
+  .delete(deleteArticleById)
   .all(handleInvalidMethod405);
 
 articlesRouter

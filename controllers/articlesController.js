@@ -5,7 +5,8 @@ const {
   insertCommentByArticleId,
   fetchAllCommentsByArticleId,
   fetchAllArticles,
-  checkArticleExists
+  checkArticleExists,
+  removeArticleById
 } = require("../models/articlesModels.js");
 
 //users model
@@ -85,4 +86,12 @@ exports.getAllArticles = (req, res, next) => {
       res.status(200).send({ articles });
     })
     .catch(next);
+};
+
+exports.deleteArticleById = (req, res, next) => {
+  const { article_id } = req.params;
+
+  removeArticleById(article_id).then(() => {
+    res.sendStatus(204);
+  });
 };

@@ -630,6 +630,22 @@ describe("/api", () => {
               });
           });
         });
+        describe("DELETE", () => {
+          it.only("status: 204, delete article returns nothing", () => {
+            return request(app)
+              .delete("/api/articles/1")
+              .expect(204)
+              .then(() => {
+                return request(app)
+                  .get("/api/articles/1/comments")
+                  .expect(404);
+              })
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("404 Not Found - Article does not exist");
+              });
+          });
+        });
+
         /* ARTICLES /:article_id END POINT ERRORS */
         describe("ERROR - GET", () => {
           describe("NOT FOUND", () => {

@@ -133,3 +133,10 @@ exports.checkArticleExists = article_id => {
       }
     });
 };
+
+exports.removeArticleById = article_id => {
+  return connection
+    .from("articles")
+    .where({ article_id })
+    .del();
+};
