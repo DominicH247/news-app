@@ -231,14 +231,12 @@ describe("/api", () => {
             .expect(200)
             .then(({ body }) => {
               const testOutput = {
-                user: [
-                  {
-                    username: "butter_bridge",
-                    name: "jonny",
-                    avatar_url:
-                      "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
-                  }
-                ]
+                user: {
+                  username: "butter_bridge",
+                  name: "jonny",
+                  avatar_url:
+                    "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+                }
               };
               expect(body).to.eql(testOutput);
             });
@@ -525,14 +523,6 @@ describe("/api", () => {
               expect(article.article_id).to.equal(1);
             });
         });
-        // it("status: 200, responds with empty array if article_id does not exist", () => {
-        //   return request(app)
-        //     .get("/api/articles/1000")
-        //     .expect(200)
-        //     .then(({ body: { article } }) => {
-        //       expect(article).to.eql([]);
-        //     });
-        // });
         describe("PATCH", () => {
           it("status: 200, takes object for vote change, respond with the updated article", () => {
             return request(app)

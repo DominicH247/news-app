@@ -10,7 +10,7 @@ exports.fetchUserByUsername = username => {
         // if user array === 0 reject with custom 404
         return Promise.reject(custom404);
       }
-      return user;
+      return user[0];
     });
 };
 
