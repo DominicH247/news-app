@@ -75,7 +75,7 @@ exports.insertCommentByArticleId = (article_id, comment) => {
 exports.fetchAllCommentsByArticleId = (
   // to refactor out map and just use select
   article_id,
-  { sort_by = "created_at", order = "asc" }
+  { sort_by = "created_at", order = "desc" }
 ) => {
   return connection
     .select("comment_id", "author", "votes", "created_at", "body")

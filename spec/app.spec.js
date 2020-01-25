@@ -543,7 +543,7 @@ describe("/api", () => {
                 expect(article.votes).to.equal(200);
               });
           });
-          it.only("status: 200, sending an empty body returns the article unaffected", () => {
+          it("status: 200, sending an empty body returns the article unaffected", () => {
             return request(app)
               .patch("/api/articles/1")
               .send({})
@@ -731,12 +731,14 @@ describe("/api", () => {
             });
             return Promise.all(orderPromises);
           });
-          it("ordering defaults to created_at, ascending if no queries are provided", () => {
+          it("ordering defaults to created_at, descending if no queries are provided", () => {
             return request(app)
               .get(`/api/articles/1/comments`)
               .expect(200)
               .then(({ body: { comments } }) => {
-                expect(comments).to.be.sortedBy("created_at");
+                expect(comments).to.be.sortedBy("created_at", {
+                  descending: true
+                });
               });
           });
         });
