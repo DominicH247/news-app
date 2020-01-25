@@ -3,7 +3,7 @@ const connection = require("../db/connection.js");
 // errors
 const { custom404Topic } = require("../errors/customErrors.js");
 
-exports.fecthAllTopics = () => {
+exports.fetchAllTopics = () => {
   return connection.select("*").from("topics");
 };
 

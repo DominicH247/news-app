@@ -1,7 +1,7 @@
-const { fecthAllTopics } = require("../models/topicsModels.js");
+const { fetchAllTopics } = require("../models/topicsModels.js");
 
 exports.getTopics = (req, res, next) => {
-  fecthAllTopics()
+  fetchAllTopics()
     .then(topics => {
       res.status(200).send({ topics });
     })
