@@ -90,51 +90,51 @@ exports.fetchAllArticles = ({
   limit = 10
 }) => {
   // TO REFACTOR TO PROMISE.ALL
+
+  const articlesCountPromise = connection
+    .select()
+    .count("*")
+    .from("articles");
+
+  const getArticlesPromise = connection
+    .select(
+      "articles.author",
+      "title",
+      "articles.article_id",
+      "topic",
+      "articles.created_at",
+      "articles.votes"
+    )
+    .from("articles")
+    .count({ comment_count: "comment_id" })
+    .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
+    .groupBy("articles.article_id")
+    .orderBy(sort_by, order)
+    .limit(limit)
+    .modify(query => {
+      if (author) {
+        query.where("articles.author", author);
+      }
+      if (topic) {
+        query.where({ topic });
+      }
+    });
+
   // reject if passed an invalid order or an invalid limit
   if (order === "asc" || (order === "desc" && /\d/.test(limit))) {
-    return connection
-      .select(
-        "articles.author",
-        "title",
-        "articles.article_id",
-        "topic",
-        "articles.created_at",
-        "articles.votes"
-      )
-      .from("articles")
-      .count({ comment_count: "comment_id" })
-      .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
-      .groupBy("articles.article_id")
-      .orderBy(sort_by, order)
-      .limit(limit)
-      .modify(query => {
-        if (author) {
-          query.where("articles.author", author);
-        }
-        if (topic) {
-          query.where({ topic });
-        }
-      })
-      .then(articles => {
-        // second request for all articles to get count
-        return connection
-          .select()
-          .count("*")
-          .from("articles")
-          .then(articlesCount => {
-            /* convert comment_count to int to allow sort_by votes 
-            to work correctly and add total articles_count */
-            const formattedArticles = articles.map(article => {
-              const formatted = {
-                ...article,
-                comment_count: Number(article.comment_count),
-                total_count: Number(articlesCount[0].count)
-              };
-              return formatted;
-            });
-            return formattedArticles;
-          });
-      });
+    return Promise.all([articlesCountPromise, getArticlesPromise]).then(
+      ([count, articles]) => {
+        const formattedArticles = articles.map(article => {
+          const formatted = {
+            ...article,
+            comment_count: Number(article.comment_count),
+            total_count: Number(count[0].count)
+          };
+          return formatted;
+        });
+        return formattedArticles;
+      }
+    );
   } else {
     return Promise.reject(custom400);
   }
