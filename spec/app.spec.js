@@ -32,6 +32,20 @@ describe("/api", () => {
               topics: [{ slug: "football", description: "Footie!" }]
             }
           },
+          "POST /api/topics": {
+            description: "post a new topic, returns the posted topic",
+            exampleRequestBody: {
+              slug: "Hello World!",
+              description: "making new discoveries"
+            },
+            exampleResponse: {
+              article: {
+                slug: "Hello World!",
+                description: "making new discoveries"
+              }
+            }
+          },
+
           "GET /api/users/:username": {
             description: " servers a user object",
             queries: [],
@@ -44,10 +58,27 @@ describe("/api", () => {
               }
             }
           },
+          "POST /api/users": {
+            description: "post a new user, responds with the new user",
+            exampleRequestBody: {
+              username: "testuser1",
+              avatar_url: "www.avatar.com",
+              name: "test user"
+            },
+            exampleResponse: {
+              user: {
+                username: "testuser1",
+                avatar_url: "www.avatar.com",
+                name: "test user"
+              }
+            }
+          },
           "GET /api/articles": {
             description: "serves an array of all articles",
-            queries: ["author", "topic", "sort_by", "order"],
+            queries: ["author", "topic", "sort_by", "order", "page", "limit"],
             exampleResponse: {
+              next: { page: 3, limit: 5 },
+              previous: { page: 1, limit: 5 },
               articles: [
                 {
                   author: "weegembump",
@@ -55,9 +86,32 @@ describe("/api", () => {
                   article_id: 33,
                   topic: "cooking",
                   votes: 0,
-                  created_at: "2018-05-30T16: 59: 13.341Z"
+                  created_at: "2018-05-30T16: 59: 13.341Z",
+                  total_count: 38
                 }
               ]
+            }
+          },
+          "POST /api/articles": {
+            description:
+              "post a new article (must be an existing user), responds with the posted artticle, defaults votes to zero for nely posted article",
+            exampleRequestBody: {
+              username: "lurker",
+              topic: "football",
+              title: "top 10 strikers in the league",
+              body: "article content..."
+            },
+            exampleReponse: {
+              article: {
+                author: "lurker",
+                title: "top 10 strikers in the league",
+                topic: "football",
+                body: "article content...",
+                article_id: 10,
+                votes: 0,
+                comment_count: 0,
+                created_at: "2018-05-30T16:59:13.341Z"
+              }
             }
           },
           "GET /api/articles/:article_id": {
@@ -75,6 +129,9 @@ describe("/api", () => {
                 body: "Some content for the article body."
               }
             }
+          },
+          "DELETE /api/aritcles/:article_id": {
+            description: "Delete an existing article"
           },
           "PATCH /api/articles/:article_id": {
             description:
@@ -95,7 +152,7 @@ describe("/api", () => {
           },
           "POST /api/articles/:article_id/commments": {
             description:
-              "post a comment to an existing article_id, responds with the comment object",
+              "post a comment to an existing article_id, responds with the comment object, defaults votes to zero for newly posted comment",
             exampleRequestBody: { username: "jessjelly", body: "hello world!" },
             exampleResponse: {
               comment: {
@@ -110,8 +167,16 @@ describe("/api", () => {
           "GET /api/articles/:article_id/commments": {
             description:
               "serves an array of comments for the specified article_id",
-            queries: ["sort_by", "order"],
+            queries: ["sort_by", "order", "limit", "page"],
             exampleResponse: {
+              next: {
+                page: 3,
+                limit: 5
+              },
+              previous: {
+                page: 1,
+                limit: 5
+              },
               comments: [
                 {
                   comment_id: 31,
