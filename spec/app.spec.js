@@ -354,7 +354,7 @@ describe("/api", () => {
   /* ARTICLES ENDPOINT */
   describe("/articles", () => {
     describe("GET", () => {
-      it("Status: 200, responds with array of article objects, default query created_at - descending", () => {
+      it("Status: 200, responds with array of article objects, default query created_at - descending adds comment_count and total_count of all articles", () => {
         return request(app)
           .get("/api/articles")
           .expect(200)
@@ -363,6 +363,16 @@ describe("/api", () => {
             expect(articles).to.be.sortedBy("created_at", { descending: true });
             expect(articles[1].comment_count).to.equal(0);
             expect(articles[8].comment_count).to.equal(2);
+            expect(articles[0]).to.have.all.keys([
+              "author",
+              "title",
+              "article_id",
+              "topic",
+              "created_at",
+              "votes",
+              "comment_count",
+              "total_count"
+            ]);
           });
       });
       it("query sort by author", () => {

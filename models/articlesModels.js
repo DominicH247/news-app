@@ -89,6 +89,7 @@ exports.fetchAllArticles = ({
   topic,
   limit = 10
 }) => {
+  // TO REFACTOR TO PROMISE.ALL
   // reject if passed an invalid order or an invalid limit
   if (order === "asc" || (order === "desc" && /\d/.test(limit))) {
     return connection
@@ -115,15 +116,24 @@ exports.fetchAllArticles = ({
         }
       })
       .then(articles => {
-        // convert comment_count to int to allow sort_by votes to work correctly
-        const formattedArticles = articles.map(article => {
-          const formatted = {
-            ...article,
-            comment_count: Number(article.comment_count)
-          };
-          return formatted;
-        });
-        return formattedArticles;
+        // second request for all articles to get count
+        return connection
+          .select()
+          .count("*")
+          .from("articles")
+          .then(articlesCount => {
+            /* convert comment_count to int to allow sort_by votes 
+            to work correctly and add total articles_count */
+            const formattedArticles = articles.map(article => {
+              const formatted = {
+                ...article,
+                comment_count: Number(article.comment_count),
+                total_count: Number(articlesCount[0].count)
+              };
+              return formatted;
+            });
+            return formattedArticles;
+          });
       });
   } else {
     return Promise.reject(custom400);
