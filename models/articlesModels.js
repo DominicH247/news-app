@@ -71,15 +71,27 @@ exports.insertCommentByArticleId = (article_id, comment) => {
 
 exports.fetchAllCommentsByArticleId = (
   article_id,
-  { sort_by = "created_at", order = "desc", limit = 10 }
+  { sort_by = "created_at", order = "desc", limit = 10, page = 1 }
 ) => {
-  if (/\d/.test(limit)) {
+  // set vars for pagination
+  const setPage = parseInt(page);
+  const setLimit = parseInt(limit);
+
+  if (/\d/.test(setLimit) && /\d/.test(setPage)) {
     return connection
       .select("comment_id", "author", "votes", "created_at", "body")
       .from("comments")
       .where({ article_id })
       .orderBy(sort_by, order)
-      .limit(limit);
+      .then(comments => {
+        const paginatedComments = paginatedResults(
+          comments,
+          "comments",
+          setPage,
+          setLimit
+        );
+        return paginatedComments;
+      });
   } else {
     return Promise.reject(custom400);
   }
@@ -95,7 +107,7 @@ exports.fetchAllArticles = ({
 }) => {
   // TO REFACTOR TO PROMISE.ALL
 
-  // PAGINATION
+  // vars for pagination
   const setPage = parseInt(page);
   const setLimit = parseInt(limit);
 

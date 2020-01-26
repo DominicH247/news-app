@@ -593,12 +593,21 @@ describe("/api", () => {
               });
             });
         });
-        it.only("page is greater than results returns empty array the results for that page", () => {
+        it("page is greater than results returns empty array the results for that page", () => {
           return request(app)
             .get("/api/articles?page=1000&limit=10")
             .expect(200)
             .then(({ body: { articles } }) => {
               expect(articles).to.eql([]);
+            });
+        });
+        it("Status: 200, page query at 3 the previous page is 2 an next page is 4 ", () => {
+          return request(app)
+            .get("/api/articles/?page=2&limit=3")
+            .expect(200)
+            .then(({ body }) => {
+              expect(body.next.page).to.equal(3);
+              expect(body.previous.page).to.equal(1);
             });
         });
         // LIMIT AND PAGINATION FUNCTIONALITY
@@ -1138,6 +1147,33 @@ describe("/api", () => {
                     expect(comments.length).to.equal(3);
                   });
               });
+
+              // LIMIT AND PAGINATION
+              it("Status: 200, accepts pagination query", () => {
+                return request(app)
+                  .get("/api/articles/1/comments?page=2&limit=3")
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    expect(comments[0].comment_id).to.equal(5);
+                  });
+              });
+              it("Status: 200, page exceeds is past the available comments, returns empty array ", () => {
+                return request(app)
+                  .get("/api/articles/1/comments?page=1000&limit=3")
+                  .expect(200)
+                  .then(({ body: { comments } }) => {
+                    expect(comments.length).to.equal(0);
+                  });
+              });
+              it("Status: 200, page query at 3 the previous page is 2 an next page is 4 ", () => {
+                return request(app)
+                  .get("/api/articles/1/comments?page=2&limit=3")
+                  .expect(200)
+                  .then(({ body }) => {
+                    expect(body.next.page).to.equal(3);
+                    expect(body.previous.page).to.equal(1);
+                  });
+              });
             });
             /* ERRORS api/articles/:article_id/comments*/
             describe("ERRORS - POST", () => {
@@ -1214,6 +1250,24 @@ describe("/api", () => {
                 it("STATUS: 400, Not valid limit", () => {
                   return request(app)
                     .get("/api/articles/1/comments?limit=NOT-VALID-LIMIT")
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                      expect(msg).to.equal("400 Bad Request");
+                    });
+                });
+                it("STATUS:400, not valid page query", () => {
+                  return request(app)
+                    .get("/api/articles/1/comments?page=NOT-VALID&limit=3")
+                    .expect(400)
+                    .then(({ body: { msg } }) => {
+                      expect(msg).to.equal("400 Bad Request");
+                    });
+                });
+                it("STATUS:400, invalid page query and limit", () => {
+                  return request(app)
+                    .get(
+                      "/api/articles/1/comments?page=NOT-VALID&limit=NOT-VALID"
+                    )
                     .expect(400)
                     .then(({ body: { msg } }) => {
                       expect(msg).to.equal("400 Bad Request");

@@ -59,7 +59,7 @@ exports.getAllCommentsByArticleId = (req, res, next) => {
 
   Promise.all(arrayOfPromises)
     .then(([aritcle, comments]) => {
-      res.status(200).send({ comments });
+      res.status(200).send(comments);
     })
     .catch(next);
 };
