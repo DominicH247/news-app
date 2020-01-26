@@ -2,6 +2,9 @@ const connection = require("../db/connection.js");
 
 const { custom404Article, custom400 } = require("../errors/customErrors.js");
 
+//util functions
+const { paginatedResults } = require("../controllers/utils/utils.js");
+
 exports.fetchArticleById = article_id => {
   return connection
     .select(
@@ -87,9 +90,14 @@ exports.fetchAllArticles = ({
   order = "desc",
   author,
   topic,
+  page = 1,
   limit = 10
 }) => {
   // TO REFACTOR TO PROMISE.ALL
+
+  // PAGINATION
+  const setPage = parseInt(page);
+  const setLimit = parseInt(limit);
 
   const articlesCountPromise = connection
     .select()
@@ -110,7 +118,7 @@ exports.fetchAllArticles = ({
     .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
     .groupBy("articles.article_id")
     .orderBy(sort_by, order)
-    .limit(limit)
+    // .limit(limit)
     .modify(query => {
       if (author) {
         query.where("articles.author", author);
@@ -121,7 +129,10 @@ exports.fetchAllArticles = ({
     });
 
   // reject if passed an invalid order or an invalid limit
-  if (order === "asc" || (order === "desc" && /\d/.test(limit))) {
+  if (
+    order === "asc" ||
+    (order === "desc" && /\d/.test(setPage) && /\d/.test(setLimit))
+  ) {
     return Promise.all([articlesCountPromise, getArticlesPromise]).then(
       ([count, articles]) => {
         const formattedArticles = articles.map(article => {
@@ -132,7 +143,16 @@ exports.fetchAllArticles = ({
           };
           return formatted;
         });
-        return formattedArticles;
+
+        // Get paginated results
+        const paginatedArticles = paginatedResults(
+          formattedArticles,
+          "articles",
+          setPage,
+          setLimit
+        );
+
+        return paginatedArticles;
       }
     );
   } else {

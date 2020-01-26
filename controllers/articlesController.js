@@ -84,7 +84,7 @@ exports.getAllArticles = (req, res, next) => {
   // everything valid
   Promise.all(arrayOfPromises)
     .then(([articles]) => {
-      res.status(200).send({ articles });
+      res.status(200).send(articles);
     })
     .catch(next);
 };
