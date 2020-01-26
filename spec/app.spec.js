@@ -373,6 +373,7 @@ describe("/api", () => {
               "comment_count",
               "total_count"
             ]);
+            expect(articles[0].total_count).to.equal(12);
           });
       });
       it("query sort by author", () => {
