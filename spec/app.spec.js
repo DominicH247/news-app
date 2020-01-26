@@ -1021,6 +1021,14 @@ describe("/api", () => {
                   });
                 });
             });
+            it("accepts a limit query to limit the number of results served", () => {
+              return request(app)
+                .get("/api/articles/1/comments?limit=3")
+                .expect(200)
+                .then(({ body: { comments } }) => {
+                  expect(comments.length).to.equal(3);
+                });
+            });
           });
           /* ERRORS api/articles/:article_id/comments*/
           describe("ERRORS - POST", () => {
@@ -1089,6 +1097,14 @@ describe("/api", () => {
               it("400 - Not valid article_id", () => {
                 return request(app)
                   .get("/api/articles/NOT-VALID-ID/comments")
+                  .expect(400)
+                  .then(({ body: { msg } }) => {
+                    expect(msg).to.equal("400 Bad Request");
+                  });
+              });
+              it("STATUS: 400, Not valid limit", () => {
+                return request(app)
+                  .get("/api/articles/1/comments?limit=NOT-VALID-LIMIT")
                   .expect(400)
                   .then(({ body: { msg } }) => {
                     expect(msg).to.equal("400 Bad Request");

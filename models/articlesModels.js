@@ -68,13 +68,18 @@ exports.insertCommentByArticleId = (article_id, comment) => {
 
 exports.fetchAllCommentsByArticleId = (
   article_id,
-  { sort_by = "created_at", order = "desc" }
+  { sort_by = "created_at", order = "desc", limit = 10 }
 ) => {
-  return connection
-    .select("comment_id", "author", "votes", "created_at", "body")
-    .from("comments")
-    .where({ article_id })
-    .orderBy(sort_by, order);
+  if (/\d/.test(limit)) {
+    return connection
+      .select("comment_id", "author", "votes", "created_at", "body")
+      .from("comments")
+      .where({ article_id })
+      .orderBy(sort_by, order)
+      .limit(limit);
+  } else {
+    return Promise.reject(custom400);
+  }
 };
 
 exports.fetchAllArticles = ({
