@@ -360,7 +360,6 @@ describe("/api", () => {
           .expect(200)
           .then(({ body: { articles } }) => {
             expect(articles).to.be.a("array");
-            expect(articles.length).to.equal(12);
             expect(articles).to.be.sortedBy("created_at", { descending: true });
             expect(articles[1].comment_count).to.equal(0);
             expect(articles[8].comment_count).to.equal(2);
@@ -457,6 +456,58 @@ describe("/api", () => {
         });
         return Promise.all(ordersPromises);
       });
+
+      // LIMIT AND PAGINATION FUNCTIONALITY
+      describe("Accepts a limit query", () => {
+        it("Limits the number of results served", () => {
+          return request(app)
+            .get("/api/articles?limit=5")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles.length).to.equal(5);
+            });
+        });
+        it("Query limit defaults to 10, if no limmit is passed in", () => {
+          return request(app)
+            .get("/api/articles")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles.length).to.equal(10);
+            });
+        });
+        it("Displays the max number of results available if limit exceeds number of results", () => {
+          return request(app)
+            .get("/api/articles?limit=100")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles.length).to.equal(12);
+            });
+        });
+        it("Works with sort_by query", () => {
+          return request(app)
+            .get("/api/articles?sort_by=author&limit=5")
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles.length).to.equal(5);
+              expect(articles).to.be.sortedBy("author", { descending: true });
+            });
+        });
+        it("Works with author,topic query and sort_by", () => {
+          return request(app)
+            .get(
+              "/api/articles?author=rogersop&topic=mitch&sort_by=article_id&order=asc&limit=2"
+            )
+            .expect(200)
+            .then(({ body: { articles } }) => {
+              expect(articles.length).to.equal(2);
+              expect(articles).to.be.sortedBy("article_id");
+              expect(articles[0].author).to.equal("rogersop");
+              expect(articles[0].topic).to.equal("mitch");
+            });
+        });
+      });
+      // LIMIT AND PAGINATION FUNCTIONALITY
+
       describe("query by author", () => {
         it("Status:200, returns array of articles who author is equal to query", () => {
           return request(app)
@@ -622,6 +673,15 @@ describe("/api", () => {
                   .get("/api/articles?sort_by=NOT-A-VALID-COLUMN")
                   .expect(400)
                   .then(({ body: { msg } }) => {
+                    expect(msg).to.equal("400 Bad Request");
+                  });
+              });
+              it("STATUS: 400, invalid limit ", () => {
+                return request(app)
+                  .get("/api/articles?limit=INVALID-LIMIT")
+                  .expect(400)
+                  .then(({ body: { msg } }) => {
+                    console.log(msg);
                     expect(msg).to.equal("400 Bad Request");
                   });
               });
