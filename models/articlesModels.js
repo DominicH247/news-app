@@ -105,8 +105,6 @@ exports.fetchAllArticles = ({
   page = 1,
   limit = 10
 }) => {
-  // TO REFACTOR TO PROMISE.ALL
-
   // vars for pagination
   const setPage = parseInt(page);
   const setLimit = parseInt(limit);
