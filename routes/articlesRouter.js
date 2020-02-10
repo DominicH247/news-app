@@ -1,5 +1,4 @@
 const express = require("express");
-const cors = require("cors");
 const articlesRouter = express.Router();
 
 // error handlers
@@ -31,7 +30,7 @@ articlesRouter
 
 articlesRouter
   .route("/")
-  .get(cors(), getAllArticles)
+  .get(getAllArticles)
   .post(postArticle)
   .all(handleInvalidMethod405);
 
