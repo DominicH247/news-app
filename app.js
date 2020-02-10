@@ -8,7 +8,7 @@ const cors = require("cors");
 // };
 
 //enable cors
-app.use(cors(corsOptions));
+app.use(cors());
 
 // routers
 const apiRouter = require("./routes/apiRouter.js");
