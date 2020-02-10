@@ -1,5 +1,9 @@
 const express = require("express");
+const cors = require("cors");
 const apiRouter = express.Router();
+
+//enable cors
+app.use(cors());
 
 // routers
 const topicsRouter = require("./topicsRouter.js");
