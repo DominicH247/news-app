@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 
 // routers
@@ -12,6 +13,9 @@ const {
   handleServerError500,
   handleUnprocessable422
 } = require("./errors/index.js");
+
+//enable cors
+app.use(cors());
 
 //parse request body
 app.use(express.json());
