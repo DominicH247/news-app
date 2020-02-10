@@ -1,14 +1,14 @@
 const express = require("express");
 const app = express();
-const cors = require("cors");
+// const cors = require("cors");
 
-const corsOptions = {
-  origin: "*",
-  optionSuccessStatus: 200
-};
+// const corsOptions = {
+//   origin: "*",
+//   optionSuccessStatus: 200
+// };
 
-//enable cors
-app.use(cors(corsOptions));
+// //enable cors
+// app.use(cors(corsOptions));
 
 // routers
 const apiRouter = require("./routes/apiRouter.js");
