@@ -1,5 +1,4 @@
 const express = require("express");
-const cors = require("cors");
 
 const articlesRouter = express.Router();
 
@@ -16,9 +15,6 @@ const {
   deleteArticleById,
   postArticle
 } = require("../controllers/articlesController.js");
-
-//enable cors
-app.use(cors());
 
 articlesRouter
   .route("/:article_id")
