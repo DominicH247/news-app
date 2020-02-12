@@ -19,13 +19,14 @@ module.exports = [
   {
     username: "cooljmessy",
     name: "Peter Messy",
-    avatar_url: "https://i.imgur.com/WfX0Neu.jpg"
+    avatar_url:
+      "https://vignette.wikia.nocookie.net/mrbean/images/3/3e/Mr_bean_article.jpg/revision/latest/top-crop/width/220/height/220?cb=20150617122146"
   },
   {
     username: "weegembump",
     name: "Gemma Bump",
     avatar_url:
-      "https://www.upandrunning.co.uk/media/catalog/product/cache/1/image/650x/040ec09b1e35df139433887a97daa66f/m/r/mr-bump.jpg"
+      "https://i.pinimg.com/originals/ee/ae/23/eeae23049a5afa038b8405e864a1ad52.png"
   },
   {
     username: "jessjelly",

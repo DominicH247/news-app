@@ -2,11 +2,6 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 
-// const corsOptions = {
-//   origin: "*",
-//   optionSuccessStatus: 200
-// };
-
 //enable cors
 app.use(cors());
 
