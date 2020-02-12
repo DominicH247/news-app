@@ -5,6 +5,7 @@ exports.up = function(knex) {
       .primary()
       .notNullable();
     topicsTable.string("description").notNullable();
+    topicsTable.string("topic_icon").notNullable();
   });
 };
 
