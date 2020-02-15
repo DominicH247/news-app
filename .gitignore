@@ -1,3 +1,4 @@
 node_modules
 knexfile.js
 psql.sql
+configuration.js

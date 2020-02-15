@@ -1,4 +1,5 @@
 const { DB_URL } = process.env;
+const userConfig = require("./configuration.js");
 
 const ENV = process.env.NODE_ENV || "development";
 
@@ -16,15 +17,15 @@ const customConfig = {
   development: {
     connection: {
       database: "nc_news",
-      user: "domh",
-      password: "password"
+      user: userConfig.user,
+      password: userConfig.password
     }
   },
   test: {
     connection: {
       database: "nc_news_test",
-      user: "domh",
-      password: "password"
+      user: userConfig.user,
+      password: userConfig.password
     }
   },
   production: {
