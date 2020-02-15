@@ -5,6 +5,9 @@ const cors = require("cors");
 //enable cors
 app.use(cors());
 
+// set json indentation
+app.set("json spaces", 4);
+
 // routers
 const apiRouter = require("./routes/apiRouter.js");
 
