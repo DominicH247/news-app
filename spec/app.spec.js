@@ -242,18 +242,23 @@ describe("/api", () => {
       it("Status: 201, post new topic, returns the posted topic", () => {
         return request(app)
           .post("/api/topics")
-          .send({ slug: "new topic", description: "a description" })
+          .send({
+            slug: "new topic",
+            description: "a description",
+            topic_icon: "www.icon.com"
+          })
           .expect(201)
           .then(({ body: { topic } }) => {
             expect(topic).to.eql({
               slug: "new topic",
-              description: "a description"
+              description: "a description",
+              topic_icon: "www.icon.com"
             });
           });
       });
     });
     describe("GET", () => {
-      it("STATUS: 200, responds with an array of objects, nesteted within, on the key of topics", () => {
+      it("STATUS: 200, responds with an array of objects, nested within, on the key of topics", () => {
         // expect array
         // expect length of array = length of test db topics item
         // expect first item in topics array to be object with expected keys
@@ -264,7 +269,11 @@ describe("/api", () => {
           .then(({ body: { topics } }) => {
             expect(topics).to.be.a("array");
             expect(topics.length).to.equal(3);
-            expect(topics[0]).to.have.all.keys(["description", "slug"]);
+            expect(topics[0]).to.have.all.keys([
+              "description",
+              "slug",
+              "topic_icon"
+            ]);
           });
       });
       /* TOPICS /topics ENDPOINT ERRORS */
@@ -297,7 +306,7 @@ describe("/api", () => {
               .send({ slug: "mitch", description: "test" })
               .expect(400)
               .then(({ body: { msg } }) => {
-                expect(msg).to.equal("400 Bad Request - already exists");
+                expect(msg).to.equal("400 Bad Request");
               });
           });
         });
