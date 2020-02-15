@@ -1,4 +1,4 @@
-# Project Title
+# NC-News Backend
 
 Welcome to NC News! This is the backend repo to NC News' RESTful API, which serves a wide variety of news stories collected and curated by our roving reporters based throughout Leeds and Manchester.
 
